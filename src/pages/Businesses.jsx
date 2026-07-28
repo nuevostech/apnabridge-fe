@@ -1,0 +1,117 @@
+import { useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import BusinessCard from '../components/BusinessCard'
+import { businesses, states, cities } from '../data/businesses'
+import { categories } from '../data/categories'
+
+export default function Businesses() {
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const q = searchParams.get('q') || ''
+  const country = searchParams.get('country') || ''
+  const state = searchParams.get('state') || ''
+  const city = searchParams.get('city') || ''
+  const category = searchParams.get('category') || ''
+
+  function updateParam(key, value) {
+    const next = new URLSearchParams(searchParams)
+    if (value) next.set(key, value)
+    else next.delete(key)
+    setSearchParams(next)
+  }
+
+  const results = useMemo(() => {
+    return businesses.filter((b) => {
+      if (country && b.country !== country) return false
+      if (state && b.state !== state) return false
+      if (city && b.city !== city) return false
+      if (category && b.category !== category) return false
+      if (q) {
+        const haystack = `${b.name} ${b.about} ${b.city} ${b.state}`.toLowerCase()
+        if (!haystack.includes(q.toLowerCase())) return false
+      }
+      return true
+    })
+  }, [q, country, state, city, category])
+
+  return (
+    <section className="section businesses-page">
+      <div className="section-head">
+        <h1>Businesses</h1>
+        <p className="lede">{results.length} listing{results.length === 1 ? '' : 's'}</p>
+      </div>
+
+      <div className="country-tabs">
+        <button
+          type="button"
+          className={country === '' ? 'is-active' : ''}
+          onClick={() => updateParam('country', '')}
+        >
+          All
+        </button>
+        <button
+          type="button"
+          className={country === 'USA' ? 'is-active' : ''}
+          onClick={() => updateParam('country', 'USA')}
+        >
+          🇺🇸 USA Businesses
+        </button>
+        <button
+          type="button"
+          className={country === 'India' ? 'is-active' : ''}
+          onClick={() => updateParam('country', 'India')}
+        >
+          🇮🇳 India Businesses
+        </button>
+      </div>
+
+      <div className="filters-bar">
+        <input
+          type="search"
+          placeholder="Search..."
+          value={q}
+          onChange={(e) => updateParam('q', e.target.value)}
+          aria-label="Search businesses"
+        />
+        <select value={state} onChange={(e) => updateParam('state', e.target.value)} aria-label="Filter by state">
+          <option value="">All states</option>
+          {states.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+        <select value={city} onChange={(e) => updateParam('city', e.target.value)} aria-label="Filter by city">
+          <option value="">All cities</option>
+          {cities.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+        <select
+          value={category}
+          onChange={(e) => updateParam('category', e.target.value)}
+          aria-label="Filter by category"
+        >
+          <option value="">All categories</option>
+          {categories.map((c) => (
+            <option key={c.slug} value={c.slug}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {results.length > 0 ? (
+        <div className="card-grid">
+          {results.map((b) => (
+            <BusinessCard key={b.id} business={b} />
+          ))}
+        </div>
+      ) : (
+        <p className="empty-state">No businesses match those filters yet.</p>
+      )}
+    </section>
+  )
+}

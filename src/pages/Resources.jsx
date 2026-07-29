@@ -5,7 +5,7 @@ const RESOURCE_GROUPS = [
       'How to write a business description that converts browsers into customers',
       'Pricing your services for both US and India markets',
       'Getting your first five reviews on ApnaBridge',
-    ],
+    ],  
   },
   {
     title: 'Marketing Ideas',

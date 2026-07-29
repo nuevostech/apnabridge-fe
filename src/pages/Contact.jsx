@@ -1,16 +1,29 @@
 import { useState } from 'react'
+import { sendContactMessage } from '../utils/api'
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
   const [sent, setSent] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }))
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    setSent(true)
+    setSubmitting(true)
+    setSubmitError('')
+
+    try {
+      await sendContactMessage(form)
+      setSent(true)
+    } catch (err) {
+      setSubmitError(err.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -51,8 +64,9 @@ export default function Contact() {
                   onChange={(e) => update('message', e.target.value)}
                 />
               </label>
-              <button type="submit" className="btn btn-primary">
-                Send Message
+              {submitError && <p className="form-error">{submitError}</p>}
+              <button type="submit" className="btn btn-primary" disabled={submitting}>
+                {submitting ? 'Sending…' : 'Send Message'}
               </button>
             </>
           )}

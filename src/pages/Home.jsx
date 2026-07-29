@@ -1,37 +1,63 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import BusinessCard from '../components/BusinessCard'
 import { categories } from '../data/categories'
 import { useData } from '../store/DataContext'
+import { testimonials as fallbackTestimonials } from '../data/testimonials'
+import { createTestimonial, getTestimonials } from '../utils/api'
 
-const initialTestimonialForm = { name: '', business: '', quote: '' }
+const emptyTestimonialForm = { quote: '', name: '', business: '' }
 
 export default function Home() {
   const navigate = useNavigate()
-  const { businesses, testimonials, addTestimonial } = useData()
+  const { businesses } = useData()
   const [query, setQuery] = useState('')
+
+  const [testimonialsList, setTestimonialsList] = useState(fallbackTestimonials)
   const [showTestimonialForm, setShowTestimonialForm] = useState(false)
-  const [testimonialForm, setTestimonialForm] = useState(initialTestimonialForm)
+  const [testimonialForm, setTestimonialForm] = useState(emptyTestimonialForm)
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   const featured = businesses.filter((b) => b.featured).slice(0, 6)
   const latest = [...businesses]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 4)
 
-  function updateTestimonialField(field, value) {
-    setTestimonialForm((f) => ({ ...f, [field]: value }))
-  }
-
-  function handleTestimonialSubmit(e) {
-    e.preventDefault()
-    addTestimonial(testimonialForm)
-    setTestimonialForm(initialTestimonialForm)
-    setShowTestimonialForm(false)
-  }
+  useEffect(() => {
+    getTestimonials()
+      .then((res) => {
+        if (res?.data?.length) setTestimonialsList(res.data)
+      })
+      .catch(() => {
+        // Backend unreachable — keep showing the fallback testimonials.
+      })
+  }, [])
 
   function handleSearch(e) {
     e.preventDefault()
     navigate(query ? `/businesses?q=${encodeURIComponent(query)}` : '/businesses')
+  }
+
+  function updateTestimonialField(field, value) {
+    setTestimonialForm((f) => ({ ...f, [field]: value }))
+  }
+
+  async function handleTestimonialSubmit(e) {
+    e.preventDefault()
+    setSubmitting(true)
+    setSubmitError('')
+
+    try {
+      const created = await createTestimonial(testimonialForm)
+      setTestimonialsList((list) => [created, ...list])
+      setTestimonialForm(emptyTestimonialForm)
+      setShowTestimonialForm(false)
+    } catch (err) {
+      setSubmitError(err.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -146,35 +172,33 @@ export default function Home() {
           <h2>Testimonials</h2>
           <button
             type="button"
-            className="section-link section-link-button"
+            className="btn btn-ghost"
             onClick={() => setShowTestimonialForm((v) => !v)}
           >
-            {showTestimonialForm ? 'Cancel' : '+ Share your experience'}
+            {showTestimonialForm ? 'Cancel' : '+ Add Testimonial'}
           </button>
         </div>
 
         {showTestimonialForm && (
-          <form className="testimonial-form" onSubmit={handleTestimonialSubmit}>
-            <div className="form-row">
-              <label>
-                Your Name
-                <input
-                  required
-                  value={testimonialForm.name}
-                  onChange={(e) => updateTestimonialField('name', e.target.value)}
-                />
-              </label>
-              <label>
-                Business Name
-                <input
-                  required
-                  value={testimonialForm.business}
-                  onChange={(e) => updateTestimonialField('business', e.target.value)}
-                />
-              </label>
-            </div>
+          <form className="contact-form testimonial-form" onSubmit={handleTestimonialSubmit}>
             <label>
-              Your Experience
+              Your name
+              <input
+                required
+                value={testimonialForm.name}
+                onChange={(e) => updateTestimonialField('name', e.target.value)}
+              />
+            </label>
+            <label>
+              Business name
+              <input
+                required
+                value={testimonialForm.business}
+                onChange={(e) => updateTestimonialField('business', e.target.value)}
+              />
+            </label>
+            <label>
+              Your testimonial
               <textarea
                 required
                 rows={3}
@@ -182,14 +206,15 @@ export default function Home() {
                 onChange={(e) => updateTestimonialField('quote', e.target.value)}
               />
             </label>
-            <button type="submit" className="btn btn-primary">
-              Submit Testimonial
+            {submitError && <p className="form-error">{submitError}</p>}
+            <button type="submit" className="btn btn-primary" disabled={submitting}>
+              {submitting ? 'Submitting…' : 'Submit Testimonial'}
             </button>
           </form>
         )}
 
         <div className="testimonial-grid">
-          {testimonials.map((t) => (
+          {testimonialsList.map((t) => (
             <blockquote key={t.id || t.name} className="testimonial-card">
               <p>&ldquo;{t.quote}&rdquo;</p>
               <footer>

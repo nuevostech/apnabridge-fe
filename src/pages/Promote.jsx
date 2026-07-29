@@ -4,7 +4,7 @@ import { categories } from '../data/categories'
 import { countries, statesByCountry } from '../data/locations'
 import { useData } from '../store/DataContext'
 import { fileToDataUrl } from '../utils/files'
-
+import { addBusiness } from "../services/businessService";
 const MAX_GALLERY_PHOTOS = 6
 
 const PLANS = [
@@ -61,7 +61,6 @@ const initialForm = {
 }
 
 export default function Promote() {
-  const { addBusiness } = useData()
   const [form, setForm] = useState(initialForm)
   const [created, setCreated] = useState(null)
   const [processingImages, setProcessingImages] = useState(false)
@@ -103,28 +102,52 @@ export default function Promote() {
     setForm((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== index) }))
   }
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    const business = addBusiness({
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const payload = {
       name: form.businessName,
-      ownerName: form.ownerName,
-      category: form.category,
-      country: form.country,
-      city: form.city,
-      state: form.state,
+      slug: form.businessName
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "-"),
+
+      owner_id: form.ownerName,
+
+      description: form.about,
+
       phone: form.phone,
       email: form.email,
       website: form.website,
-      instagram: form.instagram,
-      facebook: form.facebook,
-      about: form.about,
-      logoUrl: form.logoUrl,
-      coverUrl: form.coverUrl,
-      gallery: form.gallery,
-    })
-    setCreated(business)
-  }
 
+      city: form.city,
+      state: form.state,
+      country: form.country,
+
+      category_slug: form.category,
+
+      plan: "Free",
+
+      logo: form.logoUrl,
+      cover_image: form.coverUrl,
+    };
+
+    const response = await addBusiness(payload);
+
+    console.log("Business Added:", response.data);
+
+    alert("Business added successfully!");
+
+    setCreated(response.data.data);
+
+    setForm(initialForm);
+
+  } catch (error) {
+    console.error(error.response?.data || error);
+    alert("Failed to add business");
+  }
+};
   return (
     <section className="section">
       <div className="section-head">

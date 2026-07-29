@@ -1,13 +1,28 @@
-import { useMemo } from 'react'
+import { useMemo, useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import BusinessCard from '../components/BusinessCard'
 import { categories } from '../data/categories'
 import { statesByCountry } from '../data/locations'
 import { useData } from '../store/DataContext'
-
+import {getBusinesses,addBusiness,} from "../services/businessService";
 export default function Businesses() {
-  const { businesses } = useData()
+  const [businesses, setBusinesses] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams()
+  useEffect(() => {
+  fetchBusinesses();
+}, []);
+
+const fetchBusinesses = async () => {
+  try {
+    const response = await getBusinesses();
+
+    console.log("API Response:", response.data);
+
+    setBusinesses(response.data.data);
+  } catch (error) {
+    console.error("Error fetching businesses:", error);
+  }
+};
 
   const q = searchParams.get('q') || ''
   const country = searchParams.get('country') || ''
@@ -89,14 +104,14 @@ export default function Businesses() {
           className={country === 'USA' ? 'is-active' : ''}
           onClick={() => selectCountry('USA')}
         >
-          🇺🇸 USA Businesses
+           USA Businesses
         </button>
         <button
           type="button"
           className={country === 'India' ? 'is-active' : ''}
           onClick={() => selectCountry('India')}
         >
-          🇮🇳 India Businesses
+           India Businesses
         </button>
       </div>
 

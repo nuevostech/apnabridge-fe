@@ -1,10 +1,11 @@
 import { Link, useParams } from 'react-router-dom'
-import { CoverPlaceholder, LogoPlaceholder } from '../components/Placeholder'
-import { getBusinessById } from '../data/businesses'
+import { Cover, Logo } from '../components/Placeholder'
 import { getCategoryBySlug } from '../data/categories'
+import { useData } from '../store/DataContext'
 
 export default function BusinessProfile() {
   const { id } = useParams()
+  const { getBusinessById } = useData()
   const business = getBusinessById(id)
 
   if (!business) {
@@ -23,10 +24,10 @@ export default function BusinessProfile() {
 
   return (
     <section className="profile-page">
-      <CoverPlaceholder name={business.name} className="profile-cover" />
+      <Cover name={business.name} src={business.coverUrl} className="profile-cover" />
 
       <div className="profile-header">
-        <LogoPlaceholder name={business.name} size={88} />
+        <Logo name={business.name} src={business.logoUrl} size={88} />
         <div>
           <h1>{business.name}</h1>
           <p className="business-card-meta">
@@ -40,29 +41,45 @@ export default function BusinessProfile() {
 
       <div className="profile-body">
         <div className="profile-main">
-          <h2>About</h2>
-          <p>{business.about}</p>
+          {business.about && (
+            <>
+              <h2>About</h2>
+              <p>{business.about}</p>
+            </>
+          )}
 
-          <h2>Gallery</h2>
-          <div className="gallery-grid">
-            {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="gallery-item" aria-hidden="true" />
-            ))}
-          </div>
+          {business.gallery?.length > 0 && (
+            <>
+              <h2>Gallery</h2>
+              <div className="gallery-grid">
+                {business.gallery.map((src, i) => (
+                  <img key={src.slice(-16) + i} src={src} alt={`${business.name} gallery ${i + 1}`} className="gallery-item" />
+                ))}
+              </div>
+            </>
+          )}
 
-          <h2>Follow</h2>
-          <div className="social-links">
-            <a
-              href={`https://instagram.com/${business.instagram}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Instagram
-            </a>
-            <a href={`https://facebook.com/${business.facebook}`} target="_blank" rel="noreferrer">
-              Facebook
-            </a>
-          </div>
+          {(business.instagram || business.facebook) && (
+            <>
+              <h2>Follow</h2>
+              <div className="social-links">
+                {business.instagram && (
+                  <a
+                    href={`https://instagram.com/${business.instagram}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Instagram
+                  </a>
+                )}
+                {business.facebook && (
+                  <a href={`https://facebook.com/${business.facebook}`} target="_blank" rel="noreferrer">
+                    Facebook
+                  </a>
+                )}
+              </div>
+            </>
+          )}
         </div>
 
         <aside className="profile-sidebar">
@@ -82,12 +99,14 @@ export default function BusinessProfile() {
               <span>Email</span>
               <a href={`mailto:${business.email}`}>{business.email}</a>
             </li>
-            <li>
-              <span>Website</span>
-              <a href={business.website} target="_blank" rel="noreferrer">
-                {business.website.replace('https://', '')}
-              </a>
-            </li>
+            {business.website && (
+              <li>
+                <span>Website</span>
+                <a href={business.website} target="_blank" rel="noreferrer">
+                  {business.website.replace('https://', '')}
+                </a>
+              </li>
+            )}
           </ul>
           <a href={waLink} target="_blank" rel="noreferrer" className="btn btn-primary btn-block">
             Contact {business.name}

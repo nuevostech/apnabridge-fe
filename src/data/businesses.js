@@ -280,10 +280,3 @@ export const businesses = [
     createdAt: '2026-01-22',
   },
 ]
-
-export function getBusinessById(id) {
-  return businesses.find((b) => b.id === id)
-}
-
-export const states = [...new Set(businesses.map((b) => b.state))].sort()
-export const cities = [...new Set(businesses.map((b) => b.city))].sort()

@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom'
-import { businesses } from '../data/businesses'
 import { categories } from '../data/categories'
+import { useData } from '../store/DataContext'
 
 export default function Categories() {
+  const { businesses } = useData()
   return (
     <section className="section">
       <div className="section-head">

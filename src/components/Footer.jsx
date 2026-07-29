@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom'
+import logo from '../assets/apnabridge-logo.png'
 
 export default function Footer() {
   return (
     <footer className="site-footer">
       <div className="site-footer-inner">
         <div className="footer-col">
-          <span className="brand-mark">ApnaBridge</span>
+          <img src={logo} alt="ApnaBridge" className="brand-logo footer-logo" />
           <p>Promoting Indian businesses across the USA and India.</p>
         </div>
 

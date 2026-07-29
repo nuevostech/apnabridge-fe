@@ -1,10 +1,12 @@
 import { useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import BusinessCard from '../components/BusinessCard'
-import { businesses, states, cities } from '../data/businesses'
 import { categories } from '../data/categories'
+import { statesByCountry } from '../data/locations'
+import { useData } from '../store/DataContext'
 
 export default function Businesses() {
+  const { businesses } = useData()
   const [searchParams, setSearchParams] = useSearchParams()
 
   const q = searchParams.get('q') || ''
@@ -14,11 +16,39 @@ export default function Businesses() {
   const category = searchParams.get('category') || ''
 
   function updateParam(key, value) {
+    updateParams({ [key]: value })
+  }
+
+  function updateParams(updates) {
     const next = new URLSearchParams(searchParams)
-    if (value) next.set(key, value)
-    else next.delete(key)
+    for (const [key, value] of Object.entries(updates)) {
+      if (value) next.set(key, value)
+      else next.delete(key)
+    }
     setSearchParams(next)
   }
+
+  function selectCountry(value) {
+    updateParams({ country: value, state: '', city: '' })
+  }
+
+  function selectState(value) {
+    updateParams({ state: value, city: '' })
+  }
+
+  const states = useMemo(() => {
+    if (country) return statesByCountry[country] || []
+    return [...statesByCountry.USA, ...statesByCountry.India].sort()
+  }, [country])
+
+  const cities = useMemo(() => {
+    const pool = businesses.filter((b) => {
+      if (country && b.country !== country) return false
+      if (state && b.state !== state) return false
+      return true
+    })
+    return [...new Set(pool.map((b) => b.city))].sort()
+  }, [businesses, country, state])
 
   const results = useMemo(() => {
     return businesses.filter((b) => {
@@ -32,34 +62,39 @@ export default function Businesses() {
       }
       return true
     })
-  }, [q, country, state, city, category])
+  }, [businesses, q, country, state, city, category])
 
   return (
     <section className="section businesses-page">
       <div className="section-head">
-        <h1>Businesses</h1>
-        <p className="lede">{results.length} listing{results.length === 1 ? '' : 's'}</p>
+        <div>
+          <h1>Businesses</h1>
+          <p className="lede">{results.length} listing{results.length === 1 ? '' : 's'}</p>
+        </div>
+        <Link to="/promote" className="btn btn-primary">
+          Add Business
+        </Link>
       </div>
 
       <div className="country-tabs">
         <button
           type="button"
           className={country === '' ? 'is-active' : ''}
-          onClick={() => updateParam('country', '')}
+          onClick={() => selectCountry('')}
         >
           All
         </button>
         <button
           type="button"
           className={country === 'USA' ? 'is-active' : ''}
-          onClick={() => updateParam('country', 'USA')}
+          onClick={() => selectCountry('USA')}
         >
           🇺🇸 USA Businesses
         </button>
         <button
           type="button"
           className={country === 'India' ? 'is-active' : ''}
-          onClick={() => updateParam('country', 'India')}
+          onClick={() => selectCountry('India')}
         >
           🇮🇳 India Businesses
         </button>
@@ -73,7 +108,7 @@ export default function Businesses() {
           onChange={(e) => updateParam('q', e.target.value)}
           aria-label="Search businesses"
         />
-        <select value={state} onChange={(e) => updateParam('state', e.target.value)} aria-label="Filter by state">
+        <select value={state} onChange={(e) => selectState(e.target.value)} aria-label="Filter by state">
           <option value="">All states</option>
           {states.map((s) => (
             <option key={s} value={s}>

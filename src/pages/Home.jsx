@@ -1,18 +1,33 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import BusinessCard from '../components/BusinessCard'
-import { businesses } from '../data/businesses'
 import { categories } from '../data/categories'
-import { testimonials } from '../data/testimonials'
+import { useData } from '../store/DataContext'
+
+const initialTestimonialForm = { name: '', business: '', quote: '' }
 
 export default function Home() {
   const navigate = useNavigate()
+  const { businesses, testimonials, addTestimonial } = useData()
   const [query, setQuery] = useState('')
+  const [showTestimonialForm, setShowTestimonialForm] = useState(false)
+  const [testimonialForm, setTestimonialForm] = useState(initialTestimonialForm)
 
   const featured = businesses.filter((b) => b.featured).slice(0, 6)
   const latest = [...businesses]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 4)
+
+  function updateTestimonialField(field, value) {
+    setTestimonialForm((f) => ({ ...f, [field]: value }))
+  }
+
+  function handleTestimonialSubmit(e) {
+    e.preventDefault()
+    addTestimonial(testimonialForm)
+    setTestimonialForm(initialTestimonialForm)
+    setShowTestimonialForm(false)
+  }
 
   function handleSearch(e) {
     e.preventDefault()
@@ -127,10 +142,55 @@ export default function Home() {
       </section>
 
       <section className="section">
-        <h2>Testimonials</h2>
+        <div className="section-head">
+          <h2>Testimonials</h2>
+          <button
+            type="button"
+            className="section-link section-link-button"
+            onClick={() => setShowTestimonialForm((v) => !v)}
+          >
+            {showTestimonialForm ? 'Cancel' : '+ Share your experience'}
+          </button>
+        </div>
+
+        {showTestimonialForm && (
+          <form className="testimonial-form" onSubmit={handleTestimonialSubmit}>
+            <div className="form-row">
+              <label>
+                Your Name
+                <input
+                  required
+                  value={testimonialForm.name}
+                  onChange={(e) => updateTestimonialField('name', e.target.value)}
+                />
+              </label>
+              <label>
+                Business Name
+                <input
+                  required
+                  value={testimonialForm.business}
+                  onChange={(e) => updateTestimonialField('business', e.target.value)}
+                />
+              </label>
+            </div>
+            <label>
+              Your Experience
+              <textarea
+                required
+                rows={3}
+                value={testimonialForm.quote}
+                onChange={(e) => updateTestimonialField('quote', e.target.value)}
+              />
+            </label>
+            <button type="submit" className="btn btn-primary">
+              Submit Testimonial
+            </button>
+          </form>
+        )}
+
         <div className="testimonial-grid">
           {testimonials.map((t) => (
-            <blockquote key={t.name} className="testimonial-card">
+            <blockquote key={t.id || t.name} className="testimonial-card">
               <p>&ldquo;{t.quote}&rdquo;</p>
               <footer>
                 <strong>{t.name}</strong>

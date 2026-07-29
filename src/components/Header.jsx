@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import logo from '../assets/apnabridge-logo.png'
 
 const NAV_LINKS = [
   { to: '/', label: 'Home', end: true },
@@ -17,7 +18,7 @@ export default function Header() {
     <header className="site-header">
       <div className="site-header-inner">
         <NavLink to="/" className="brand" onClick={() => setOpen(false)}>
-          <span className="brand-mark">ApnaBridge</span>
+          <img src={logo} alt="ApnaBridge" className="brand-logo" />
         </NavLink>
 
         <button

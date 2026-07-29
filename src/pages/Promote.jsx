@@ -1,5 +1,11 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { categories } from '../data/categories'
+import { countries, statesByCountry } from '../data/locations'
+import { useData } from '../store/DataContext'
+import { fileToDataUrl } from '../utils/files'
+
+const MAX_GALLERY_PHOTOS = 6
 
 const PLANS = [
   {
@@ -39,23 +45,84 @@ const initialForm = {
   businessName: '',
   ownerName: '',
   category: '',
+  country: '',
   city: '',
+  state: '',
   phone: '',
   email: '',
+  website: '',
+  instagram: '',
+  facebook: '',
+  about: '',
   plan: 'free',
+  logoUrl: '',
+  coverUrl: '',
+  gallery: [],
 }
 
 export default function Promote() {
+  const { addBusiness } = useData()
   const [form, setForm] = useState(initialForm)
-  const [submitted, setSubmitted] = useState(false)
+  const [created, setCreated] = useState(null)
+  const [processingImages, setProcessingImages] = useState(false)
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }))
   }
 
+  function updateCountry(value) {
+    setForm((f) => ({ ...f, country: value, state: '' }))
+  }
+
+  async function handleLogoChange(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    setProcessingImages(true)
+    update('logoUrl', await fileToDataUrl(file, 300))
+    setProcessingImages(false)
+  }
+
+  async function handleCoverChange(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    setProcessingImages(true)
+    update('coverUrl', await fileToDataUrl(file, 1000))
+    setProcessingImages(false)
+  }
+
+  async function handleGalleryChange(e) {
+    const files = Array.from(e.target.files).slice(0, MAX_GALLERY_PHOTOS - form.gallery.length)
+    if (files.length === 0) return
+    setProcessingImages(true)
+    const dataUrls = await Promise.all(files.map((f) => fileToDataUrl(f, 800)))
+    setForm((f) => ({ ...f, gallery: [...f.gallery, ...dataUrls] }))
+    setProcessingImages(false)
+  }
+
+  function removeGalleryPhoto(index) {
+    setForm((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== index) }))
+  }
+
   function handleSubmit(e) {
     e.preventDefault()
-    setSubmitted(true)
+    const business = addBusiness({
+      name: form.businessName,
+      ownerName: form.ownerName,
+      category: form.category,
+      country: form.country,
+      city: form.city,
+      state: form.state,
+      phone: form.phone,
+      email: form.email,
+      website: form.website,
+      instagram: form.instagram,
+      facebook: form.facebook,
+      about: form.about,
+      logoUrl: form.logoUrl,
+      coverUrl: form.coverUrl,
+      gallery: form.gallery,
+    })
+    setCreated(business)
   }
 
   return (
@@ -82,13 +149,16 @@ export default function Promote() {
       </div>
 
       <div className="promote-form-wrap">
-        {submitted ? (
+        {created ? (
           <div className="form-success">
-            <h2>Thanks, {form.ownerName || 'there'}!</h2>
+            <h2>Thanks, {created.ownerName || 'there'}!</h2>
             <p>
-              We've received your details for <strong>{form.businessName}</strong>. Our team will
-              reach out within 2 business days to finish setting up your listing.
+              <strong>{created.name}</strong> is now live on ApnaBridge under the{' '}
+              {PLANS.find((p) => p.id === form.plan)?.name} plan.
             </p>
+            <Link to={`/businesses/${created.id}`} className="btn btn-primary">
+              View Your Listing
+            </Link>
           </div>
         ) : (
           <form className="promote-form" onSubmit={handleSubmit}>
@@ -128,10 +198,45 @@ export default function Promote() {
                 </select>
               </label>
               <label>
-                City &amp; State
+                Country
+                <select
+                  required
+                  value={form.country}
+                  onChange={(e) => updateCountry(e.target.value)}
+                >
+                  <option value="">Select a country</option>
+                  {countries.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="form-row">
+              <label>
+                State
+                <select
+                  required
+                  value={form.state}
+                  disabled={!form.country}
+                  onChange={(e) => update('state', e.target.value)}
+                >
+                  <option value="">
+                    {form.country ? 'Select a state' : 'Select a country first'}
+                  </option>
+                  {(statesByCountry[form.country] || []).map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                City
                 <input
                   required
-                  placeholder="e.g. Edison, New Jersey"
+                  placeholder="e.g. Edison"
                   value={form.city}
                   onChange={(e) => update('city', e.target.value)}
                 />
@@ -157,10 +262,99 @@ export default function Promote() {
                 />
               </label>
             </div>
+            <div className="form-row">
+              <label>
+                Website (optional)
+                <input
+                  type="url"
+                  placeholder="https://yourbusiness.com"
+                  value={form.website}
+                  onChange={(e) => update('website', e.target.value)}
+                />
+              </label>
+              <label>
+                Instagram (optional)
+                <input
+                  placeholder="username"
+                  value={form.instagram}
+                  onChange={(e) => update('instagram', e.target.value.replace(/^@/, ''))}
+                />
+              </label>
+            </div>
+            <label>
+              Facebook (optional)
+              <input
+                placeholder="username or page name"
+                value={form.facebook}
+                onChange={(e) => update('facebook', e.target.value)}
+              />
+            </label>
+            <label>
+              About your business (optional)
+              <textarea
+                rows={3}
+                value={form.about}
+                onChange={(e) => update('about', e.target.value)}
+              />
+            </label>
+
+            <div className="form-row">
+              <label>
+                Logo (optional)
+                <input type="file" accept="image/*" onChange={handleLogoChange} />
+              </label>
+              <label>
+                Cover Image (optional)
+                <input type="file" accept="image/*" onChange={handleCoverChange} />
+              </label>
+            </div>
+
+            {(form.logoUrl || form.coverUrl) && (
+              <div className="photo-preview-row">
+                {form.logoUrl && (
+                  <img src={form.logoUrl} alt="Logo preview" className="photo-preview photo-preview-round" />
+                )}
+                {form.coverUrl && (
+                  <img src={form.coverUrl} alt="Cover preview" className="photo-preview" />
+                )}
+              </div>
+            )}
+
+            <label>
+              Gallery Photos (optional, up to {MAX_GALLERY_PHOTOS})
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                disabled={form.gallery.length >= MAX_GALLERY_PHOTOS}
+                onChange={handleGalleryChange}
+              />
+            </label>
+
+            {form.gallery.length > 0 && (
+              <div className="photo-preview-row">
+                {form.gallery.map((src, i) => (
+                  <div key={src.slice(-16) + i} className="photo-preview-wrap">
+                    <img src={src} alt={`Gallery ${i + 1}`} className="photo-preview" />
+                    <button
+                      type="button"
+                      className="photo-preview-remove"
+                      aria-label="Remove photo"
+                      onClick={() => removeGalleryPhoto(i)}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {processingImages && <p className="lede">Processing photo…</p>}
+
             <p className="lede">
               Selected plan: <strong>{PLANS.find((p) => p.id === form.plan)?.name}</strong>
             </p>
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary" disabled={processingImages}>
               Submit Listing
             </button>
           </form>

@@ -24,3 +24,24 @@ export function CoverPlaceholder({ name, className = '' }) {
     </div>
   )
 }
+
+export function Logo({ name, src, size = 56 }) {
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt={name}
+        className="logo-image"
+        style={{ width: size, height: size }}
+      />
+    )
+  }
+  return <LogoPlaceholder name={name} size={size} />
+}
+
+export function Cover({ name, src, className = '' }) {
+  if (src) {
+    return <img src={src} alt={name} className={`cover-image ${className}`} />
+  }
+  return <CoverPlaceholder name={name} className={className} />
+}

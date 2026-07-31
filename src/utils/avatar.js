@@ -11,7 +11,7 @@ export function initials(name) {
 
 export function colorFor(seed) {
   let hash = 0
-  for (let i = 0; i < seed.length; i++) {
+  for (let i = 0; i <seed?.length; i++) {
     hash = seed.charCodeAt(i) + ((hash << 5) - hash)
   }
   return PALETTE[Math.abs(hash) % PALETTE.length]

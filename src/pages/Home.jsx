@@ -242,7 +242,7 @@ setShowTestimonialForm(false);
           <h2>Testimonials</h2>
           <button
             type="button"
-            className="btn btn-ghost"
+            className="btn btn-primary"
             onClick={() => setShowTestimonialForm((v) => !v)}
           >
             {showTestimonialForm ? 'Cancel' : '+ Add Testimonial'}

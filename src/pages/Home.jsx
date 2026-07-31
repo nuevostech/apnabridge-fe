@@ -2,16 +2,24 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import BusinessCard from '../components/BusinessCard'
 import { categories } from '../data/categories'
-import { useData } from '../store/DataContext'
 import { testimonials as fallbackTestimonials } from '../data/testimonials'
-import { createTestimonial, getTestimonials } from '../utils/api'
-
+import {
+  createTestimonial,
+  getTestimonials,
+  getFeaturedBusinesses,
+  getRecentBusinesses,
+  searchBusinesses,
+} from "../utils/api";
 const emptyTestimonialForm = { quote: '', name: '', business: '' }
 
 export default function Home() {
   const navigate = useNavigate()
-  const { businesses } = useData()
+
   const [query, setQuery] = useState('')
+  const [featured, setFeatured] = useState([]);
+  const [recent, setRecent] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
+const [isSearching, setIsSearching] = useState(false);
 
   const [testimonialsList, setTestimonialsList] = useState(fallbackTestimonials)
   const [showTestimonialForm, setShowTestimonialForm] = useState(false)
@@ -19,25 +27,51 @@ export default function Home() {
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
 
-  const featured = businesses.filter((b) => b.featured).slice(0, 6)
-  const latest = [...businesses]
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 4)
-
   useEffect(() => {
-    getTestimonials()
-      .then((res) => {
-        if (res?.data?.length) setTestimonialsList(res.data)
-      })
-      .catch(() => {
-        // Backend unreachable — keep showing the fallback testimonials.
-      })
-  }, [])
+  getTestimonials()
+    .then((res) => {
+      if (res?.data?.length) {
+        setTestimonialsList(res.data);
+      }
+    })
+    .catch(() => {});
 
-  function handleSearch(e) {
-    e.preventDefault()
-    navigate(query ? `/businesses?q=${encodeURIComponent(query)}` : '/businesses')
+  getFeaturedBusinesses()
+    .then((res) => {
+      setFeatured(res.data || []);
+    })
+    .catch((err) => {
+      console.error("Featured Businesses:", err);
+    });
+  getRecentBusinesses()
+  .then((res) => {
+    setRecent(res.data || []);
+  })
+  .catch((err) => {
+    console.error("Recent Businesses:", err);
+  });
+}, []);
+
+  async function handleSearch(e) {
+  e.preventDefault();
+
+  if (!query.trim()) {
+    setIsSearching(false);
+    setSearchResults([]);
+    return;
   }
+
+  try {
+    const res = await searchBusinesses(query);
+
+    // If your API returns an array directly
+    setSearchResults(res.data || []);
+
+    setIsSearching(true);
+  } catch (err) {
+    console.error("Search failed:", err);
+  }
+}
 
   function updateTestimonialField(field, value) {
     setTestimonialForm((f) => ({ ...f, [field]: value }))
@@ -98,16 +132,25 @@ export default function Home() {
 
       <section className="section">
         <div className="section-head">
-          <h2>Featured Businesses</h2>
+          <h2>{isSearching ? "Search Results" : "Featured Businesses"}</h2>
           <Link to="/businesses" className="section-link">
             View all
           </Link>
         </div>
         <div className="card-grid">
-          {featured.map((b) => (
-            <BusinessCard key={b.id} business={b} />
-          ))}
-        </div>
+  {(isSearching ? searchResults : featured).map((b) => (
+    <Link
+      key={b.id}
+      to={`/businesses/${b.id}`}
+      style={{
+        textDecoration: "none",
+        color: "inherit",
+      }}
+    >
+      <BusinessCard business={b} />
+    </Link>
+  ))}
+</div>
       </section>
 
       <section className="section">
@@ -133,12 +176,12 @@ export default function Home() {
           <Link to="/businesses?country=USA" className="country-card">
             <span className="country-flag">🇺🇸</span>
             <h3>USA Businesses</h3>
-            <p>{businesses.filter((b) => b.country === 'USA').length} listings</p>
+            <p>Browse USA businesses</p>
           </Link>
           <Link to="/businesses?country=India" className="country-card">
             <span className="country-flag">🇮🇳</span>
             <h3>India Businesses</h3>
-            <p>{businesses.filter((b) => b.country === 'India').length} listings</p>
+            <p>Browse India businesses</p>
           </Link>
         </div>
       </section>
@@ -159,13 +202,22 @@ export default function Home() {
       </section>
 
       <section className="section">
-        <h2>Latest Business Promotions</h2>
-        <div className="card-grid">
-          {latest.map((b) => (
-            <BusinessCard key={b.id} business={b} />
-          ))}
-        </div>
-      </section>
+  <h2>Latest Business Promotions</h2>
+  <div className="card-grid">
+    {recent.map((b) => (
+      <Link
+        key={b.id}
+        to={`/businesses/${b.id}`}
+        style={{
+          textDecoration: "none",
+          color: "inherit",
+        }}
+      >
+        <BusinessCard business={b} />
+      </Link>
+    ))}
+  </div>
+</section>
 
       <section className="section">
         <div className="section-head">

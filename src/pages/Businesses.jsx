@@ -3,32 +3,42 @@ import { Link, useSearchParams } from 'react-router-dom'
 import BusinessCard from '../components/BusinessCard'
 import { categories } from '../data/categories'
 import { statesByCountry } from '../data/locations'
-import { useData } from '../store/DataContext'
-import {getBusinesses,addBusiness,} from "../services/businessService";
+import { getBusinesses, searchBusinesses } from "../utils/api";
 export default function Businesses() {
   const [businesses, setBusinesses] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams()
-  useEffect(() => {
-  fetchBusinesses();
-}, []);
-
-const fetchBusinesses = async () => {
-  try {
-    const response = await getBusinesses();
-
-    console.log("API Response:", response.data);
-
-    setBusinesses(response.data.data);
-  } catch (error) {
-    console.error("Error fetching businesses:", error);
-  }
-};
-
-  const q = searchParams.get('q') || ''
+   const q = searchParams.get('q') || ''
   const country = searchParams.get('country') || ''
   const state = searchParams.get('state') || ''
   const city = searchParams.get('city') || ''
   const category = searchParams.get('category') || ''
+  useEffect(() => {
+  if (q) {
+    fetchSearchBusinesses(q);
+  } else {
+    fetchBusinesses();
+  }
+}, [q]);
+const fetchBusinesses = async () => {
+  try {
+    const response = await getBusinesses();
+
+    console.log("API Response:", response);
+
+    setBusinesses(response.data || []);
+  } catch (error) {
+    console.error("Error fetching businesses:", error);
+  }
+};
+const fetchSearchBusinesses = async (keyword) => {
+  try {
+    const response = await searchBusinesses(keyword);
+    setBusinesses(response.data || []);
+  } catch (error) {
+    console.error("Error searching businesses:", error);
+  }
+};
+ 
 
   function updateParam(key, value) {
     updateParams({ [key]: value })
@@ -70,14 +80,11 @@ const fetchBusinesses = async () => {
       if (country && b.country !== country) return false
       if (state && b.state !== state) return false
       if (city && b.city !== city) return false
-      if (category && b.category !== category) return false
-      if (q) {
-        const haystack = `${b.name} ${b.about} ${b.city} ${b.state}`.toLowerCase()
-        if (!haystack.includes(q.toLowerCase())) return false
-      }
+      if (category && b.category_slug !== category) return false
       return true
     })
   }, [businesses, q, country, state, city, category])
+  console.log("Businesses:", businesses);
 
   return (
     <section className="section businesses-page">
@@ -155,10 +162,19 @@ const fetchBusinesses = async () => {
 
       {results.length > 0 ? (
         <div className="card-grid">
-          {results.map((b) => (
-            <BusinessCard key={b.id} business={b} />
-          ))}
-        </div>
+  {results.map((b) => (
+    <Link
+      key={b.id}
+      to={`/businesses/${b.id}`}
+      style={{
+        textDecoration: "none",
+        color: "inherit",
+      }}
+    >
+      <BusinessCard business={b} />
+    </Link>
+  ))}
+</div>
       ) : (
         <p className="empty-state">No businesses match those filters yet.</p>
       )}

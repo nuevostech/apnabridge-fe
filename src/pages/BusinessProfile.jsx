@@ -1,12 +1,27 @@
 import { Link, useParams } from 'react-router-dom'
 import { Cover, Logo } from '../components/Placeholder'
 import { getCategoryBySlug } from '../data/categories'
-import { useData } from '../store/DataContext'
+// import { useData } from '../store/DataContext'
+import { useEffect, useState } from "react";
+import { getBusiness } from "../utils/api";
 
 export default function BusinessProfile() {
   const { id } = useParams()
-  const { getBusinessById } = useData()
-  const business = getBusinessById(id)
+  
+const [business, setBusiness] = useState(null);
+
+useEffect(() => {
+  fetchBusiness();
+}, [id]);
+
+const fetchBusiness = async () => {
+  try {
+    const response = await getBusiness(id);
+    setBusiness(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   if (!business) {
     return (
@@ -19,15 +34,25 @@ export default function BusinessProfile() {
     )
   }
 
-  const category = getCategoryBySlug(business.category)
-  const waLink = `https://wa.me/${business.whatsapp.replace(/[^\d]/g, '')}`
+  const category = getCategoryBySlug(business.category_slug)
+  const waLink = business.phone
+  ? `https://wa.me/${business.phone.replace(/[^\d]/g, "")}`
+  : "#";
 
   return (
     <section className="profile-page">
-      <Cover name={business.name} src={business.coverUrl} className="profile-cover" />
+      <Cover
+  name={business.name}
+  src={business.cover_image}
+  className="profile-cover"
+/>
 
       <div className="profile-header">
-        <Logo name={business.name} src={business.logoUrl} size={88} />
+        <Logo
+  name={business.name}
+  src={business.logo}
+  size={88}
+/>
         <div>
           <h1>{business.name}</h1>
           <p className="business-card-meta">

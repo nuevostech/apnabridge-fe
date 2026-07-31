@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { categories } from '../data/categories'
 import { countries, statesByCountry } from '../data/locations'
-import { useData } from '../store/DataContext'
+// import { useData } from '../store/DataContext'
 import { fileToDataUrl } from '../utils/files'
-import { addBusiness } from "../services/businessService";
+import { createBusiness } from "../utils/api";
 const MAX_GALLERY_PHOTOS = 6
 
 const PLANS = [
@@ -129,23 +129,23 @@ export default function Promote() {
 
       plan: "Free",
 
-      logo: form.logoUrl,
-      cover_image: form.coverUrl,
+      logo: null,
+cover_image: null,
     };
 
-    const response = await addBusiness(payload);
+    const response = await createBusiness(payload);
 
-    console.log("Business Added:", response.data);
+console.log("Business Added:", response);
 
-    alert("Business added successfully!");
+alert(response.message);
 
-    setCreated(response.data.data);
+setCreated(response.data);
 
     setForm(initialForm);
 
   } catch (error) {
-    console.error(error.response?.data || error);
-    alert("Failed to add business");
+    console.error(error);
+alert(error.message);
   }
 };
   return (

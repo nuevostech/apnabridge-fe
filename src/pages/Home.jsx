@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import BusinessCard from '../components/BusinessCard'
-import { categories } from '../data/categories'
-import { testimonials as fallbackTestimonials } from '../data/testimonials'
 import {
   createTestimonial,
   getTestimonials,
   getFeaturedBusinesses,
   getRecentBusinesses,
   searchBusinesses,
+  getCategories,
 } from "../utils/api";
 const emptyTestimonialForm = { description: '', name: '', business: '' }
 
@@ -19,22 +18,25 @@ export default function Home() {
   const [featured, setFeatured] = useState([]);
   const [recent, setRecent] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
+  const [categories, setCategories] = useState([]);
 const [isSearching, setIsSearching] = useState(false);
 
-  const [testimonialsList, setTestimonialsList] = useState(fallbackTestimonials)
+  const [testimonialsList, setTestimonialsList] = useState([])
   const [showTestimonialForm, setShowTestimonialForm] = useState(false)
   const [testimonialForm, setTestimonialForm] = useState(emptyTestimonialForm)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
 
   useEffect(() => {
+  
   getTestimonials()
-    .then((res) => {
-      if (res?.data?.length) {
-        setTestimonialsList(res.data);
-      }
-    })
-    .catch(() => {});
+  .then((res) => {
+    setTestimonialsList(res.data || []);
+  })
+  .catch((err) => {
+    console.error("Testimonials:", err);
+    setTestimonialsList([]);
+  });
 
   getFeaturedBusinesses()
     .then((res) => {
@@ -50,6 +52,14 @@ const [isSearching, setIsSearching] = useState(false);
   .catch((err) => {
     console.error("Recent Businesses:", err);
   });
+getCategories()
+  .then((res) => {
+    setCategories(res.data || []);
+  })
+  .catch((err) => {
+    console.error("Categories:", err);
+  });
+
 }, []);
 
   async function handleSearch(e) {
@@ -165,25 +175,29 @@ setShowTestimonialForm(false);
           </Link>
         </div>
         <div className="category-grid">
-          {categories.slice(0, 10).map((c) => (
-            <Link key={c.slug} to={`/businesses?category=${c.slug}`} className="category-chip">
-              <span className="category-icon">{c.icon}</span>
-              {c.name}
-            </Link>
-          ))}
-        </div>
+  {categories.slice(0, 10).map((category) => (
+    <Link
+      key={category.id}
+      to={`/businesses?category=${category.id}`}
+      className="category-chip"
+    >
+      <span className="category-icon">📂</span>
+      {category.name}
+    </Link>
+  ))}
+</div>
       </section>
 
       <section className="section">
         <h2>Businesses by Country</h2>
         <div className="country-grid">
           <Link to="/businesses?country=USA" className="country-card">
-            <span className="country-flag">🇺🇸</span>
+            <span className="country-flag"></span>
             <h3>USA Businesses</h3>
             <p>Browse USA businesses</p>
           </Link>
           <Link to="/businesses?country=India" className="country-card">
-            <span className="country-flag">🇮🇳</span>
+            <span className="country-flag"></span>
             <h3>India Businesses</h3>
             <p>Browse India businesses</p>
           </Link>
@@ -228,7 +242,7 @@ setShowTestimonialForm(false);
           <h2>Testimonials</h2>
           <button
             type="button"
-            className="btn btn-ghost"
+            className="btn btn-primary"
             onClick={() => setShowTestimonialForm((v) => !v)}
           >
             {showTestimonialForm ? 'Cancel' : '+ Add Testimonial'}
@@ -272,7 +286,7 @@ setShowTestimonialForm(false);
         )}
 
         <div className="testimonial-grid">
-  {testimonialsList.map((t) => (
+  {testimonialsList?.map((t) => (
     <blockquote key={t.id || t.name} className="testimonial-card">
       <p>&ldquo;{t.description || t.quote}&rdquo;</p>
 

@@ -2,11 +2,14 @@ const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
 async function request(path, options = {}) {
+  const isFormData = options.body instanceof FormData;
+
   const res = await fetch(`${API_BASE_URL}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
     ...options,
+    headers: {
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
+      ...options.headers,
+    },
   });
 
   const body = await res.json().catch(() => null);
@@ -70,10 +73,12 @@ export function searchBusinesses(keyword) {
   );
 }
 // Create Business
-export function createBusiness(data) {
+// Expects a FormData instance (the backend reads multipart form fields +
+// files for logo/cover/gallery), not JSON.
+export function createBusiness(formData) {
   return request("/businesses", {
     method: "POST",
-    body: JSON.stringify(data),
+    body: formData,
   });
 }
 

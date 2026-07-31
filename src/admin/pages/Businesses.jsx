@@ -118,10 +118,10 @@ const Businesses = () => {
             ) : (
               businesses.map((business) => (
                 <tr key={business.id}>
-                  <td style={cellStyle}>{business.name}</td>
+                  <td style={cellStyle}>{business.businessName}</td>
 
                   <td style={cellStyle}>
-                    {business.category_slug || "-"}
+                    {business.category || "-"}
                   </td>
 
                   <td style={cellStyle}>

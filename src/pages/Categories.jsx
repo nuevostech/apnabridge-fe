@@ -1,23 +1,33 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getCategories } from "../utils/api";
-import { useData } from "../store/DataContext";
+import { getBusinesses, getCategories } from "../utils/api";
 
 export default function Categories() {
-  const { businesses } = useData()
   const [categories, setCategories] = useState([]);
-  useEffect(() => {
-  loadCategories();
-}, []);
+  const [businesses, setBusinesses] = useState([]);
 
-async function loadCategories() {
-  try {
-    const res = await getCategories();
-    setCategories(res.data || []);
-  } catch (err) {
-    console.error("Failed to load categories:", err);
+  useEffect(() => {
+    loadCategories();
+    loadBusinesses();
+  }, []);
+
+  async function loadCategories() {
+    try {
+      const res = await getCategories();
+      setCategories(res.data || []);
+    } catch (err) {
+      console.error("Failed to load categories:", err);
+    }
   }
-}
+
+  async function loadBusinesses() {
+    try {
+      const res = await getBusinesses(1, 1000);
+      setBusinesses(res.data || []);
+    } catch (err) {
+      console.error("Failed to load businesses:", err);
+    }
+  }
   return (
     <section className="section">
       <div className="section-head">
@@ -27,7 +37,7 @@ async function loadCategories() {
       <div className="category-grid category-grid-full">
         {categories.map((c) => {
           const count = businesses.filter(
-  (b) => b.category_slug === c.slug
+  (b) => b.category === c.slug
 ).length;
           return (
             <Link key={c.id} to={`/businesses?category=${c.slug}`} className="category-chip">

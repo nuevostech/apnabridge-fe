@@ -55,9 +55,12 @@ const initialForm = {
   facebook: '',
   about: '',
   plan: 'free',
-  logoUrl: '',
-  coverUrl: '',
-  gallery: [],
+  logoFile: null,
+  logoPreview: '',
+  coverFile: null,
+  coverPreview: '',
+  galleryFiles: [],
+  galleryPreviews: [],
 }
 
 export default function Promote() {
@@ -77,7 +80,8 @@ export default function Promote() {
     const file = e.target.files[0]
     if (!file) return
     setProcessingImages(true)
-    update('logoUrl', await fileToDataUrl(file, 300))
+    const preview = await fileToDataUrl(file, 300)
+    setForm((f) => ({ ...f, logoFile: file, logoPreview: preview }))
     setProcessingImages(false)
   }
 
@@ -85,69 +89,71 @@ export default function Promote() {
     const file = e.target.files[0]
     if (!file) return
     setProcessingImages(true)
-    update('coverUrl', await fileToDataUrl(file, 1000))
+    const preview = await fileToDataUrl(file, 1000)
+    setForm((f) => ({ ...f, coverFile: file, coverPreview: preview }))
     setProcessingImages(false)
   }
 
   async function handleGalleryChange(e) {
-    const files = Array.from(e.target.files).slice(0, MAX_GALLERY_PHOTOS - form.gallery.length)
+    const files = Array.from(e.target.files).slice(
+      0,
+      MAX_GALLERY_PHOTOS - form.galleryFiles.length
+    )
     if (files.length === 0) return
     setProcessingImages(true)
-    const dataUrls = await Promise.all(files.map((f) => fileToDataUrl(f, 800)))
-    setForm((f) => ({ ...f, gallery: [...f.gallery, ...dataUrls] }))
+    const previews = await Promise.all(files.map((f) => fileToDataUrl(f, 800)))
+    setForm((f) => ({
+      ...f,
+      galleryFiles: [...f.galleryFiles, ...files],
+      galleryPreviews: [...f.galleryPreviews, ...previews],
+    }))
     setProcessingImages(false)
   }
 
   function removeGalleryPhoto(index) {
-    setForm((f) => ({ ...f, gallery: f.gallery.filter((_, i) => i !== index) }))
+    setForm((f) => ({
+      ...f,
+      galleryFiles: f.galleryFiles.filter((_, i) => i !== index),
+      galleryPreviews: f.galleryPreviews.filter((_, i) => i !== index),
+    }))
   }
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const payload = {
-      name: form.businessName,
-      slug: form.businessName
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, "-"),
+    try {
+      const formData = new FormData();
+      formData.append("businessName", form.businessName);
+      formData.append("ownerName", form.ownerName);
+      formData.append("category", form.category);
+      formData.append("phone", form.phone);
+      formData.append("email", form.email);
+      formData.append("website", form.website);
+      formData.append("instagram", form.instagram);
+      formData.append("facebook", form.facebook);
+      formData.append("about", form.about);
+      formData.append("city", form.city);
+      formData.append("state", form.state);
+      formData.append("country", form.country);
+      // Only "Free" is a real self-serve plan right now (Premium is
+      // "coming soon", the rest are contact-for-pricing) — the backend
+      // enforces plan as an enum of Free/Basic/Premium.
+      formData.append("plan", "Free");
 
-      owner_id: form.ownerName,
+      if (form.logoFile) formData.append("logo", form.logoFile);
+      if (form.coverFile) formData.append("cover", form.coverFile);
+      form.galleryFiles.forEach((file) => formData.append("gallery", file));
 
-      description: form.about,
+      const response = await createBusiness(formData);
 
-      phone: form.phone,
-      email: form.email,
-      website: form.website,
-
-      city: form.city,
-      state: form.state,
-      country: form.country,
-
-      category_slug: form.category,
-
-      plan: "Free",
-
-      logo: null,
-cover_image: null,
-    };
-
-    const response = await createBusiness(payload);
-
-console.log("Business Added:", response);
-
-alert(response.message);
-
-setCreated(response.data);
-
-    setForm(initialForm);
-
-  } catch (error) {
-    console.error(error);
-alert(error.message);
-  }
-};
+      alert(response.message);
+      setCreated(response.data);
+      setForm(initialForm);
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
+  };
   return (
     <section className="section">
       <div className="section-head">
@@ -176,7 +182,7 @@ alert(error.message);
           <div className="form-success">
             <h2>Thanks, {created.ownerName || 'there'}!</h2>
             <p>
-              <strong>{created.name}</strong> is now live on ApnaBridge under the{' '}
+              <strong>{created.businessName}</strong> is now live on ApnaBridge under the{' '}
               {PLANS.find((p) => p.id === form.plan)?.name} plan.
             </p>
             <Link to={`/businesses/${created.id}`} className="btn btn-primary">
@@ -287,7 +293,7 @@ alert(error.message);
             </div>
             <div className="form-row">
               <label>
-                Website (optional)
+                Website
                 <input
                   type="url"
                   placeholder="https://yourbusiness.com"
@@ -296,7 +302,7 @@ alert(error.message);
                 />
               </label>
               <label>
-                Instagram (optional)
+                Instagram
                 <input
                   placeholder="username"
                   value={form.instagram}
@@ -305,7 +311,7 @@ alert(error.message);
               </label>
             </div>
             <label>
-              Facebook (optional)
+              Facebook
               <input
                 placeholder="username or page name"
                 value={form.facebook}
@@ -313,7 +319,7 @@ alert(error.message);
               />
             </label>
             <label>
-              About your business (optional)
+              About your business
               <textarea
                 rows={3}
                 value={form.about}
@@ -323,40 +329,40 @@ alert(error.message);
 
             <div className="form-row">
               <label>
-                Logo (optional)
+                Logo 
                 <input type="file" accept="image/*" onChange={handleLogoChange} />
               </label>
               <label>
-                Cover Image (optional)
+                Cover Image
                 <input type="file" accept="image/*" onChange={handleCoverChange} />
               </label>
             </div>
 
-            {(form.logoUrl || form.coverUrl) && (
+            {(form.logoPreview || form.coverPreview) && (
               <div className="photo-preview-row">
-                {form.logoUrl && (
-                  <img src={form.logoUrl} alt="Logo preview" className="photo-preview photo-preview-round" />
+                {form.logoPreview && (
+                  <img src={form.logoPreview} alt="Logo preview" className="photo-preview photo-preview-round" />
                 )}
-                {form.coverUrl && (
-                  <img src={form.coverUrl} alt="Cover preview" className="photo-preview" />
+                {form.coverPreview && (
+                  <img src={form.coverPreview} alt="Cover preview" className="photo-preview" />
                 )}
               </div>
             )}
 
             <label>
-              Gallery Photos (optional, up to {MAX_GALLERY_PHOTOS})
+              Gallery Photos 
               <input
                 type="file"
                 accept="image/*"
                 multiple
-                disabled={form.gallery.length >= MAX_GALLERY_PHOTOS}
+                disabled={form.galleryFiles.length >= MAX_GALLERY_PHOTOS}
                 onChange={handleGalleryChange}
               />
             </label>
 
-            {form.gallery.length > 0 && (
+            {form.galleryPreviews.length > 0 && (
               <div className="photo-preview-row">
-                {form.gallery.map((src, i) => (
+                {form.galleryPreviews.map((src, i) => (
                   <div key={src.slice(-16) + i} className="photo-preview-wrap">
                     <img src={src} alt={`Gallery ${i + 1}`} className="photo-preview" />
                     <button

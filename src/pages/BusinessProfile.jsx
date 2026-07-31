@@ -34,7 +34,7 @@ const fetchBusiness = async () => {
     )
   }
 
-  const category = getCategoryBySlug(business.category_slug)
+  const category = getCategoryBySlug(business.category)
   const waLink = business.phone
   ? `https://wa.me/${business.phone.replace(/[^\d]/g, "")}`
   : "#";
@@ -42,19 +42,19 @@ const fetchBusiness = async () => {
   return (
     <section className="profile-page">
       <Cover
-  name={business.name}
-  src={business.cover_image}
+  name={business.businessName}
+  src={business.coverUrl}
   className="profile-cover"
 />
 
       <div className="profile-header">
         <Logo
-  name={business.name}
-  src={business.logo}
+  name={business.businessName}
+  src={business.logoUrl}
   size={88}
 />
         <div>
-          <h1>{business.name}</h1>
+          <h1>{business.businessName}</h1>
           <p className="business-card-meta">
             {category?.icon} {category?.name} · {business.city}, {business.state} ·{' '}
             {business.country === 'USA' ? '🇺🇸' : '🇮🇳'} {business.country}
@@ -78,7 +78,7 @@ const fetchBusiness = async () => {
               <h2>Gallery</h2>
               <div className="gallery-grid">
                 {business.gallery.map((src, i) => (
-                  <img key={src.slice(-16) + i} src={src} alt={`${business.name} gallery ${i + 1}`} className="gallery-item" />
+                  <img key={src.slice(-16) + i} src={src} alt={`${business.businessName} gallery ${i + 1}`} className="gallery-item" />
                 ))}
               </div>
             </>
@@ -134,7 +134,7 @@ const fetchBusiness = async () => {
             )}
           </ul>
           <a href={waLink} target="_blank" rel="noreferrer" className="btn btn-primary btn-block">
-            Contact {business.name}
+            Contact {business.businessName}
           </a>
         </aside>
       </div>

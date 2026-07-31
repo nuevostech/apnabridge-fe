@@ -80,7 +80,7 @@ const fetchSearchBusinesses = async (keyword) => {
       if (country && b.country !== country) return false
       if (state && b.state !== state) return false
       if (city && b.city !== city) return false
-      if (category && b.category_slug !== category) return false
+      if (category && b.category !== category) return false
       return true
     })
   }, [businesses, q, country, state, city, category])

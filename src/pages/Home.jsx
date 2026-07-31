@@ -181,7 +181,7 @@ setShowTestimonialForm(false);
       to={`/businesses?category=${category.id}`}
       className="category-chip"
     >
-      <span className="category-icon">📂</span>
+      <span className="category-icon">{category.icon || '📂'}</span>
       {category.name}
     </Link>
   ))}

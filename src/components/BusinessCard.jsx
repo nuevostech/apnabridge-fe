@@ -6,9 +6,9 @@ export default function BusinessCard({ business }) {
   const category = getCategoryBySlug(business.category)
   return (
     <Link to={`/businesses/${business.id}`} className="business-card">
-      <Logo name={business.name} src={business.logoUrl} />
+      <Logo name={business.businessName} src={business.logoUrl} />
       <div className="business-card-body">
-        <h3>{business.name}</h3>
+        <h3>{business.businessName}</h3>
         <p className="business-card-meta">
           {category?.icon} {category?.name} · {business.city}, {business.state}
         </p>

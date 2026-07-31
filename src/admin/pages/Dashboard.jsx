@@ -3,11 +3,19 @@ import { getDashboardSummary } from "../../utils/api";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
+    // Business
     totalBusinesses: 0,
     approvedBusinesses: 0,
     pendingBusinesses: 0,
     rejectedBusinesses: 0,
+
+    // Testimonials
     totalTestimonials: 0,
+    approvedTestimonials: 0,
+    pendingTestimonials: 0,
+    rejectedTestimonials: 0,
+
+    // Contacts
     totalContacts: 0,
   });
 
@@ -32,39 +40,60 @@ const Dashboard = () => {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3, minmax(220px, 1fr))",
-gap: "16px",
+          gridTemplateColumns: "repeat(3, minmax(240px, 1fr))",
+          gap: "16px",
           marginTop: "30px",
         }}
       >
+        {/* Business Statistics */}
+
         <DashboardCard
           title="Total Businesses"
           value={stats.totalBusinesses}
         />
 
         <DashboardCard
-          title="Approved"
+          title="Approved Businesses"
           value={stats.approvedBusinesses}
         />
 
         <DashboardCard
-          title="Pending"
+          title="Pending Businesses"
           value={stats.pendingBusinesses}
         />
 
         <DashboardCard
-          title="Testimonials"
+          title="Rejected Businesses"
+          value={stats.rejectedBusinesses}
+        />
+
+        {/* Testimonial Statistics */}
+
+        <DashboardCard
+          title="Total Testimonials"
           value={stats.totalTestimonials}
         />
 
         <DashboardCard
-          title="Contacts"
-          value={stats.totalContacts}
+          title="Approved Testimonials"
+          value={stats.approvedTestimonials}
         />
 
         <DashboardCard
-          title="Rejected"
-          value={stats.rejectedBusinesses}
+          title="Pending Testimonials"
+          value={stats.pendingTestimonials}
+        />
+
+        <DashboardCard
+          title="Rejected Testimonials"
+          value={stats.rejectedTestimonials}
+        />
+
+        {/* Contacts */}
+
+        <DashboardCard
+          title="Total Contacts"
+          value={stats.totalContacts}
         />
       </div>
     </div>
@@ -79,7 +108,7 @@ function DashboardCard({ title, value }) {
         borderRadius: "14px",
         padding: "18px 22px",
         boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-        height: "120px",          // Fixed height
+        height: "120px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",

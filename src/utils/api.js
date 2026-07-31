@@ -29,10 +29,14 @@ export function getTestimonials() {
   return request("/testimonials");
 }
 
-export function createTestimonial({ quote, name, business }) {
+export function getAdminTestimonials() {
+  return request("/admin/testimonials");
+}
+
+export function createTestimonial({ description, name, business }) {
   return request("/testimonials", {
     method: "POST",
-    body: JSON.stringify({ quote, name, business }),
+    body: JSON.stringify({ description, name, business }),
   });
 }
 
@@ -85,6 +89,7 @@ export function approveBusiness(id) {
   return request(`/businesses/${id}/approve`, {
     method: "PUT",
   });
+
 }
 
 // Reject Business
@@ -93,6 +98,7 @@ export function rejectBusiness(id) {
     method: "PUT",
   });
 }
+
 export function getContacts() {
   return request("/contact");
 }
@@ -101,4 +107,27 @@ export function getDashboardSummary() {
 }
 export function getCategories() {
   return request("/categories");
+}
+export function deleteBusiness(id) {
+  return request(`/admin/businesses/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export function approveTestimonial(id) {
+  return request(`/admin/testimonials/${id}/approve`, {
+    method: "PUT",
+  });
+}
+
+export function rejectTestimonial(id) {
+  return request(`/admin/testimonials/${id}/reject`, {
+    method: "PUT",
+  });
+}
+
+export function deleteTestimonial(id) {
+  return request(`/admin/testimonials/${id}`, {
+    method: "DELETE",
+  });
 }

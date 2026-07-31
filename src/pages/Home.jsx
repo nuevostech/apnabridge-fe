@@ -10,7 +10,7 @@ import {
   getRecentBusinesses,
   searchBusinesses,
 } from "../utils/api";
-const emptyTestimonialForm = { quote: '', name: '', business: '' }
+const emptyTestimonialForm = { description: '', name: '', business: '' }
 
 export default function Home() {
   const navigate = useNavigate()
@@ -83,10 +83,14 @@ const [isSearching, setIsSearching] = useState(false);
     setSubmitError('')
 
     try {
-      const created = await createTestimonial(testimonialForm)
-      setTestimonialsList((list) => [created, ...list])
-      setTestimonialForm(emptyTestimonialForm)
-      setShowTestimonialForm(false)
+      await createTestimonial(testimonialForm);
+
+alert(
+  "Thank you! Your testimonial has been submitted and is awaiting admin approval."
+);
+
+setTestimonialForm(emptyTestimonialForm);
+setShowTestimonialForm(false);
     } catch (err) {
       setSubmitError(err.message)
     } finally {
@@ -252,11 +256,13 @@ const [isSearching, setIsSearching] = useState(false);
             <label>
               Your testimonial
               <textarea
-                required
-                rows={3}
-                value={testimonialForm.quote}
-                onChange={(e) => updateTestimonialField('quote', e.target.value)}
-              />
+  required
+  rows={3}
+  value={testimonialForm.description}
+  onChange={(e) =>
+    updateTestimonialField("description", e.target.value)
+  }
+/>
             </label>
             {submitError && <p className="form-error">{submitError}</p>}
             <button type="submit" className="btn btn-primary" disabled={submitting}>
@@ -266,16 +272,17 @@ const [isSearching, setIsSearching] = useState(false);
         )}
 
         <div className="testimonial-grid">
-          {testimonialsList.map((t) => (
-            <blockquote key={t.id || t.name} className="testimonial-card">
-              <p>&ldquo;{t.quote}&rdquo;</p>
-              <footer>
-                <strong>{t.name}</strong>
-                <span>{t.business}</span>
-              </footer>
-            </blockquote>
-          ))}
-        </div>
+  {testimonialsList.map((t) => (
+    <blockquote key={t.id || t.name} className="testimonial-card">
+      <p>&ldquo;{t.description || t.quote}&rdquo;</p>
+
+      <footer>
+        <strong>{t.name}</strong>
+        <span>{t.business}</span>
+      </footer>
+    </blockquote>
+  ))}
+</div>
       </section>
     </>
   )

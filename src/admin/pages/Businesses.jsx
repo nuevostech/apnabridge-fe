@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { FaCheck, FaTimes, FaTrash } from "react-icons/fa";
 import {
   getAdminBusinesses,
   approveBusiness,
   rejectBusiness,
+  deleteBusiness, // Add this API
 } from "../../utils/api";
 
 const Businesses = () => {
@@ -12,9 +14,7 @@ const Businesses = () => {
   const loadBusinesses = async () => {
     try {
       setLoading(true);
-
       const res = await getAdminBusinesses();
-
       setBusinesses(res.data || []);
     } catch (err) {
       console.error(err);
@@ -48,151 +48,215 @@ const Businesses = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this business?")) return;
+
+    try {
+      await deleteBusiness(id);
+      alert("Business deleted successfully.");
+      loadBusinesses();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   if (loading) {
     return <h3>Loading businesses...</h3>;
   }
 
   return (
-    <div style={{ padding: "30px" }}>
-      <h2 style={{ marginBottom: "20px" }}>Business Approval Management</h2>
+    <div className="admin-page">
+      <div style={{ marginBottom: "25px" }}>
+        <h1>Business Approval Management</h1>
+        <p>Manage business approvals.</p>
+      </div>
 
-      <table
+      <div
         style={{
-          width: "100%",
-          borderCollapse: "collapse",
           background: "#fff",
+          borderRadius: "10px",
+          overflow: "hidden",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
         }}
       >
-        <thead>
-          <tr style={{ background: "#f5f5f5" }}>
-            <th style={thStyle}>Business</th>
-            <th style={thStyle}>Category</th>
-            <th style={thStyle}>City</th>
-            <th style={thStyle}>Plan</th>
-            <th style={thStyle}>Status</th>
-            <th style={thStyle}>Created</th>
-            <th style={thStyle}>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {businesses.length === 0 ? (
-            <tr>
-              <td
-                colSpan="7"
-                style={{
-                  textAlign: "center",
-                  padding: "20px",
-                }}
-              >
-                No businesses found.
-              </td>
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+          }}
+        >
+          <thead>
+            <tr
+              style={{
+                background: "#f7f7f7",
+                textAlign: "left",
+              }}
+            >
+              <th style={headerStyle}>Business</th>
+              <th style={headerStyle}>Category</th>
+              <th style={headerStyle}>City</th>
+              <th style={headerStyle}>Plan</th>
+              <th style={headerStyle}>Status</th>
+              <th style={headerStyle}>Created</th>
+              <th style={headerStyle}>Actions</th>
             </tr>
-          ) : (
-            businesses.map((business) => (
-              <tr key={business.id}>
-                <td style={tdStyle}>{business.name}</td>
+          </thead>
 
-                <td style={tdStyle}>
-                  {business.category_slug || "-"}
-                </td>
-
-                <td style={tdStyle}>
-                  {business.city || "-"}
-                </td>
-
-                <td style={tdStyle}>
-                  {business.plan}
-                </td>
-
-                <td style={tdStyle}>
-                  <span
-                    style={{
-                      padding: "5px 10px",
-                      borderRadius: "20px",
-                      color: "#fff",
-                      background:
-                        business.status === "Approved"
-                          ? "green"
-                          : business.status === "Rejected"
-                          ? "red"
-                          : "orange",
-                    }}
-                  >
-                    {business.status}
-                  </span>
-                </td>
-
-                <td style={tdStyle}>
-                  {business.created_at
-                    ? new Date(
-                        business.created_at
-                      ).toLocaleDateString()
-                    : "-"}
-                </td>
-
-                <td style={tdStyle}>
-                  <button
-                    onClick={() =>
-                      handleApprove(business.id)
-                    }
-                    disabled={
-                      business.status === "Approved"
-                    }
-                    style={approveBtn}
-                  >
-                    Approve
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      handleReject(business.id)
-                    }
-                    disabled={
-                      business.status === "Rejected"
-                    }
-                    style={rejectBtn}
-                  >
-                    Reject
-                  </button>
+          <tbody>
+            {businesses.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={7}
+                  style={{
+                    padding: "30px",
+                    textAlign: "center",
+                  }}
+                >
+                  No businesses found.
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              businesses.map((business) => (
+                <tr key={business.id}>
+                  <td style={cellStyle}>{business.name}</td>
+
+                  <td style={cellStyle}>
+                    {business.category_slug || "-"}
+                  </td>
+
+                  <td style={cellStyle}>
+                    {business.city || "-"}
+                  </td>
+
+                  <td style={cellStyle}>{business.plan}</td>
+
+                  <td style={cellStyle}>
+                    <span
+                      style={{
+                        padding: "6px 16px",
+                        borderRadius: "20px",
+                        color: "#fff",
+                        fontWeight: 600,
+                        background:
+                          business.status === "Approved"
+                            ? "#16a34a"
+                            : business.status === "Rejected"
+                            ? "#dc2626"
+                            : "#f59e0b",
+                      }}
+                    >
+                      {business.status}
+                    </span>
+                  </td>
+
+                  <td style={cellStyle}>
+                    {business.created_at
+                      ? new Date(
+                          business.created_at
+                        ).toLocaleDateString()
+                      : "-"}
+                  </td>
+
+                  <td style={cellStyle}>
+                    {business.status === "Pending" && (
+                      <>
+                        <button
+                          onClick={() =>
+                            handleApprove(business.id)
+                          }
+                          style={approveIconBtn}
+                          title="Approve"
+                        >
+                          <FaCheck />
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            handleReject(business.id)
+                          }
+                          style={rejectIconBtn}
+                          title="Reject"
+                        >
+                          <FaTimes />
+                        </button>
+
+                        <button
+                          onClick={() =>
+                            handleDelete(business.id)
+                          }
+                          style={deleteIconBtn}
+                          title="Delete"
+                        >
+                          <FaTrash />
+                        </button>
+                      </>
+                    )}
+
+                    {(business.status === "Approved" ||
+                      business.status === "Rejected") && (
+                      <button
+                        onClick={() =>
+                          handleDelete(business.id)
+                        }
+                        style={deleteIconBtn}
+                        title="Delete"
+                      >
+                        <FaTrash />
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
 
-const thStyle = {
-  border: "1px solid #ddd",
-  padding: "12px",
-  textAlign: "left",
+const headerStyle = {
+  padding: "15px",
 };
 
-const tdStyle = {
-  border: "1px solid #ddd",
-  padding: "12px",
+const cellStyle = {
+  padding: "15px",
+  borderBottom: "1px solid #eee",
 };
 
-const approveBtn = {
+const approveIconBtn = {
+  width: "42px",
+  height: "42px",
+  border: "1px solid #22c55e",
+  background: "#fff",
+  color: "#22c55e",
+  borderRadius: "8px",
+  cursor: "pointer",
   marginRight: "10px",
-  padding: "8px 14px",
-  border: "none",
-  borderRadius: "4px",
-  cursor: "pointer",
-  background: "#28a745",
-  color: "#fff",
+  fontSize: "16px",
 };
 
-const rejectBtn = {
-  padding: "8px 14px",
-  border: "none",
-  borderRadius: "4px",
+const rejectIconBtn = {
+  width: "42px",
+  height: "42px",
+  border: "1px solid #ef4444",
+  background: "#fff",
+  color: "#ef4444",
+  borderRadius: "8px",
   cursor: "pointer",
-  background: "#dc3545",
-  color: "#fff",
+  marginRight: "10px",
+  fontSize: "16px",
+};
+
+const deleteIconBtn = {
+  width: "42px",
+  height: "42px",
+  border: "1px solid #9ca3af",
+  background: "#fff",
+  color: "#6b7280",
+  borderRadius: "8px",
+  cursor: "pointer",
+  fontSize: "16px",
 };
 
 export default Businesses;

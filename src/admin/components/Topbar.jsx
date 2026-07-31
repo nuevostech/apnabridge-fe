@@ -8,9 +8,7 @@ const Topbar = ({ title }) => {
         </p>
       </div>
 
-      <div className="admin-user">
-        👤 Admin
-      </div>
+      
     </div>
   );
 };

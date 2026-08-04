@@ -16,6 +16,8 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 // Admin
+import Login from "./admin/pages/Login";
+import ProtectedRoute from "./admin/components/ProtectedRoute";
 import AdminLayout from "./admin/layouts/AdminLayout";
 import Dashboard from "./admin/pages/Dashboard";
 import BusinessesAdmin from "./admin/pages/Businesses";
@@ -55,13 +57,23 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
 
-          {/* Admin Dashboard */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="businesses" element={<BusinessesAdmin />} />
-            <Route path="testimonials" element={<Testimonials />} />
-            <Route path="contacts" element={<Contacts />} />
-          </Route>
+         {/* Admin Login */}
+<Route path="/admin/login" element={<Login />} />
+
+{/* Protected Admin Dashboard */}
+<Route
+  path="/admin"
+  element={
+    <ProtectedRoute>
+      <AdminLayout />
+    </ProtectedRoute>
+  }
+>
+  <Route index element={<Dashboard />} />
+  <Route path="businesses" element={<BusinessesAdmin />} />
+  <Route path="testimonials" element={<Testimonials />} />
+  <Route path="contacts" element={<Contacts />} />
+</Route>
 
           <Route path="*" element={<NotFound />} />
         </Routes>

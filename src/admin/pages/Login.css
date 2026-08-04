@@ -1,0 +1,245 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #fff8ef 0%, #ffffff 40%, #fff3e0 100%);
+  background-size: 300% 300%;
+  animation: gradientMove 12s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: left;
+  }
+  50% {
+    background-position: right;
+  }
+  100% {
+    background-position: left;
+  }
+}
+
+.login-card {
+  width: 520px;
+  max-width: 95%;
+  background: #fff;
+  border-radius: 22px;
+  padding: 40px;
+  box-shadow: 0 15px 40px rgba(0,0,0,.08),
+              0 5px 15px rgba(217,119,6,.08);
+  animation: fadeUp .6s ease;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo-container {
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 25px;
+}
+
+.error-message {
+  color: #e53935;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 10px 0;
+  text-align: center;
+}
+
+/* ---------------- Logo ---------------- */
+
+.logo-image {
+  display: block;
+  width: 280px;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 14px;
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* ---------------- Text ---------------- */
+
+.logo-container h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 5px;
+}
+
+.subtitle {
+  margin-top: 0;
+  margin-bottom: 18px;
+  color: #666;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ---------------- Form ---------------- */
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input {
+  width: 100%;
+  height: 56px;
+  padding: 0 18px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  outline: none;
+  font-size: 16px;
+  transition: .3s;
+}
+
+.form-group input:focus {
+  border-color: #d97706;
+  box-shadow: 0 0 0 4px rgba(217,119,6,.12);
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 55px;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #777;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-password:hover {
+  color: #d97706;
+}
+
+.login-btn {
+  width: 100%;
+  height: 56px;
+  border: none;
+  border-radius: 12px;
+  background: #d97706;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.login-btn:hover {
+  background: #b45309;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(217,119,6,.25);
+}
+
+/* ---------------- Footer ---------------- */
+
+.footer {
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid #eee;
+  text-align: center;
+  color: #888;
+  font-size: 13px;
+}
+
+.footer span {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #aaa;
+}
+
+/* ---------------- Tablet ---------------- */
+
+@media (max-width:768px) {
+
+  .login-card {
+    width: 100%;
+    padding: 35px;
+  }
+
+  .logo-image {
+    width: 230px;
+  }
+
+  .logo-container h3 {
+    margin-top: -6px;
+  }
+}
+
+/* ---------------- Mobile ---------------- */
+
+@media (max-width:480px) {
+
+  .login-page {
+    padding: 20px;
+  }
+
+  .login-card {
+    padding: 25px;
+    border-radius: 16px;
+  }
+
+  .logo-image {
+    width: 190px;
+  }
+
+  .logo-container h3 {
+    font-size: 16px;
+    letter-spacing: 3px;
+    margin-top: -5px;
+  }
+
+  .form-group input {
+    height: 50px;
+    font-size: 15px;
+  }
+
+  .login-btn {
+    height: 50px;
+    font-size: 16px;
+  }
+}

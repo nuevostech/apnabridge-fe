@@ -11,14 +11,14 @@ const Contacts = () => {
 
   const fetchContacts = async () => {
     try {
+      setLoading(true);
+
       const response = await getContacts();
 
-      console.log("Contacts:", response);
-
-      // response = { success: true, data: [...] }
       setContacts(response.data || []);
-    } catch (error) {
-      console.error("Error fetching contacts:", error);
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
     } finally {
       setLoading(false);
     }
@@ -56,27 +56,39 @@ const Contacts = () => {
                 textAlign: "left",
               }}
             >
-              <th style={{ padding: "15px" }}>#</th>
-              <th style={{ padding: "15px" }}>Name</th>
-              <th style={{ padding: "15px" }}>Email</th>
-              <th style={{ padding: "15px" }}>Message</th>
-              <th style={{ padding: "15px" }}>Created</th>
+              <th style={headerStyle}>#</th>
+              <th style={headerStyle}>Name</th>
+              <th style={headerStyle}>Email</th>
+              <th style={headerStyle}>Message</th>
+              <th style={headerStyle}>Created</th>
             </tr>
           </thead>
 
           <tbody>
-            {contacts.length > 0 ? (
+            {contacts.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={5}
+                  style={{
+                    textAlign: "center",
+                    padding: "30px",
+                  }}
+                >
+                  No contact messages found.
+                </td>
+              </tr>
+            ) : (
               contacts.map((item, index) => (
                 <tr key={item.id}>
-                  <td style={{ padding: "15px" }}>
+                  <td style={cellStyle}>
                     {index + 1}
                   </td>
 
-                  <td style={{ padding: "15px" }}>
+                  <td style={cellStyle}>
                     {item.name}
                   </td>
 
-                  <td style={{ padding: "15px" }}>
+                  <td style={cellStyle}>
                     <a
                       href={`mailto:${item.email}`}
                       style={{
@@ -90,41 +102,40 @@ const Contacts = () => {
 
                   <td
                     style={{
-                      padding: "15px",
+                      ...cellStyle,
                       maxWidth: "400px",
                       wordBreak: "break-word",
                     }}
                   >
-                    {item.message.length > 100
-                      ? item.message.substring(0, 100) + "..."
-                      : item.message}
+                    {item.message
+                      ? item.message.length > 100
+                        ? item.message.substring(0, 100) + "..."
+                        : item.message
+                      : "-"}
                   </td>
 
-                  <td style={{ padding: "15px" }}>
+                  <td style={cellStyle}>
                     {item.created_at
                       ? new Date(item.created_at).toLocaleDateString()
                       : "-"}
                   </td>
                 </tr>
               ))
-            ) : (
-              <tr>
-                <td
-                  colSpan="5"
-                  style={{
-                    textAlign: "center",
-                    padding: "30px",
-                  }}
-                >
-                  No contact messages found.
-                </td>
-              </tr>
             )}
           </tbody>
         </table>
       </div>
     </div>
   );
+};
+
+const headerStyle = {
+  padding: "15px",
+};
+
+const cellStyle = {
+  padding: "15px",
+  borderBottom: "1px solid #eee",
 };
 
 export default Contacts;

@@ -17,56 +17,78 @@ const Testimonials = () => {
 
   const fetchTestimonials = async () => {
     try {
+      setLoading(true);
+
       const response = await getAdminTestimonials();
+
       setTestimonials(response.data || []);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleApprove = async (id) => {
-  const confirmed = window.confirm(
-    "Are you sure you want to approve this testimonial?"
-  );
+    if (
+      !window.confirm(
+        "Are you sure you want to approve this testimonial?"
+      )
+    ) {
+      return;
+    }
 
-  if (!confirmed) return;
+    try {
+      await approveTestimonial(id);
 
-  try {
-    await approveTestimonial(id);
-    alert("Testimonial approved successfully.");
-    fetchTestimonials();
-  } catch (err) {
-    alert(err.message);
-  }
-};
+      alert("Testimonial approved successfully.");
+
+      await fetchTestimonials();
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  };
 
   const handleReject = async (id) => {
-  const confirmed = window.confirm(
-    "Are you sure you want to reject this testimonial?"
-  );
+    if (
+      !window.confirm(
+        "Are you sure you want to reject this testimonial?"
+      )
+    ) {
+      return;
+    }
 
-  if (!confirmed) return;
+    try {
+      await rejectTestimonial(id);
 
-  try {
-    await rejectTestimonial(id);
-    alert("Testimonial rejected successfully.");
-    fetchTestimonials();
-  } catch (err) {
-    alert(err.message);
-  }
-};
+      alert("Testimonial rejected successfully.");
+
+      await fetchTestimonials();
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  };
 
   const handleDelete = async (id) => {
-    const confirmed = window.confirm("Are you sure you want to delete this testimonial?");
-
-    if (!confirmed) return;
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this testimonial?"
+      )
+    ) {
+      return;
+    }
 
     try {
       await deleteTestimonial(id);
-      fetchTestimonials();
+
+      alert("Testimonial deleted successfully.");
+
+      await fetchTestimonials();
     } catch (err) {
+      console.error(err);
       alert(err.message);
     }
   };
@@ -114,7 +136,19 @@ const Testimonials = () => {
           </thead>
 
           <tbody>
-            {testimonials.length > 0 ? (
+            {testimonials.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={7}
+                  style={{
+                    textAlign: "center",
+                    padding: "30px",
+                  }}
+                >
+                  No testimonials found.
+                </td>
+              </tr>
+            ) : (
               testimonials.map((item, index) => {
                 const status = item.status || "Pending";
 
@@ -126,7 +160,12 @@ const Testimonials = () => {
 
                     <td style={cellStyle}>{item.business}</td>
 
-                    <td style={{ ...cellStyle, maxWidth: "350px" }}>
+                    <td
+                      style={{
+                        ...cellStyle,
+                        maxWidth: "350px",
+                      }}
+                    >
                       {item.description
                         ? item.description.length > 80
                           ? item.description.substring(0, 80) + "..."
@@ -155,15 +194,19 @@ const Testimonials = () => {
 
                     <td style={cellStyle}>
                       {item.created_at
-  ? new Date(item.created_at).toLocaleDateString()
-  : "-"}
+                        ? new Date(
+                            item.created_at
+                          ).toLocaleDateString()
+                        : "-"}
                     </td>
 
                     <td style={cellStyle}>
                       {status === "Pending" && (
                         <>
                           <button
-                            onClick={() => handleApprove(item.id)}
+                            onClick={() =>
+                              handleApprove(item.id)
+                            }
                             style={approveBtn}
                             title="Approve"
                           >
@@ -171,49 +214,30 @@ const Testimonials = () => {
                           </button>
 
                           <button
-                            onClick={() => handleReject(item.id)}
+                            onClick={() =>
+                              handleReject(item.id)
+                            }
                             style={rejectBtn}
                             title="Reject"
                           >
                             <FaTimes />
                           </button>
-
-                          <button
-                            onClick={() => handleDelete(item.id)}
-                            style={deleteBtn}
-                            title="Delete"
-                          >
-                            <FaTrash />
-                          </button>
                         </>
                       )}
 
-                      {(status === "Approved" ||
-                        status === "Rejected") && (
-                        <button
-                          onClick={() => handleDelete(item.id)}
-                          style={deleteBtn}
-                          title="Delete"
-                        >
-                          <FaTrash />
-                        </button>
-                      )}
+                      <button
+                        onClick={() =>
+                          handleDelete(item.id)
+                        }
+                        style={deleteBtn}
+                        title="Delete"
+                      >
+                        <FaTrash />
+                      </button>
                     </td>
                   </tr>
                 );
               })
-            ) : (
-              <tr>
-                <td
-                  colSpan="7"
-                  style={{
-                    textAlign: "center",
-                    padding: "30px",
-                  }}
-                >
-                  No testimonials found.
-                </td>
-              </tr>
             )}
           </tbody>
         </table>

@@ -4,18 +4,24 @@ import {
   getAdminBusinesses,
   approveBusiness,
   rejectBusiness,
-  deleteBusiness, // Add this API
+  deleteBusiness,
 } from "../../utils/api";
 
 const Businesses = () => {
   const [businesses, setBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    loadBusinesses();
+  }, []);
+
   const loadBusinesses = async () => {
     try {
       setLoading(true);
-      const res = await getAdminBusinesses();
-      setBusinesses(res.data || []);
+
+      const response = await getAdminBusinesses();
+
+      setBusinesses(response.data || []);
     } catch (err) {
       console.error(err);
       alert(err.message);
@@ -24,16 +30,15 @@ const Businesses = () => {
     }
   };
 
-  useEffect(() => {
-    loadBusinesses();
-  }, []);
-
   const handleApprove = async (id) => {
     try {
       await approveBusiness(id);
+
       alert("Business approved successfully.");
-      loadBusinesses();
+
+      await loadBusinesses();
     } catch (err) {
+      console.error(err);
       alert(err.message);
     }
   };
@@ -41,21 +46,29 @@ const Businesses = () => {
   const handleReject = async (id) => {
     try {
       await rejectBusiness(id);
+
       alert("Business rejected successfully.");
-      loadBusinesses();
+
+      await loadBusinesses();
     } catch (err) {
+      console.error(err);
       alert(err.message);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Delete this business?")) return;
+    if (!window.confirm("Are you sure you want to delete this business?")) {
+      return;
+    }
 
     try {
       await deleteBusiness(id);
+
       alert("Business deleted successfully.");
-      loadBusinesses();
+
+      await loadBusinesses();
     } catch (err) {
+      console.error(err);
       alert(err.message);
     }
   };
@@ -118,7 +131,9 @@ const Businesses = () => {
             ) : (
               businesses.map((business) => (
                 <tr key={business.id}>
-                  <td style={cellStyle}>{business.businessName}</td>
+                  <td style={cellStyle}>
+                    {business.businessName}
+                  </td>
 
                   <td style={cellStyle}>
                     {business.category || "-"}
@@ -128,7 +143,9 @@ const Businesses = () => {
                     {business.city || "-"}
                   </td>
 
-                  <td style={cellStyle}>{business.plan}</td>
+                  <td style={cellStyle}>
+                    {business.plan}
+                  </td>
 
                   <td style={cellStyle}>
                     <span
@@ -179,31 +196,18 @@ const Businesses = () => {
                         >
                           <FaTimes />
                         </button>
-
-                        <button
-                          onClick={() =>
-                            handleDelete(business.id)
-                          }
-                          style={deleteIconBtn}
-                          title="Delete"
-                        >
-                          <FaTrash />
-                        </button>
                       </>
                     )}
 
-                    {(business.status === "Approved" ||
-                      business.status === "Rejected") && (
-                      <button
-                        onClick={() =>
-                          handleDelete(business.id)
-                        }
-                        style={deleteIconBtn}
-                        title="Delete"
-                      >
-                        <FaTrash />
-                      </button>
-                    )}
+                    <button
+                      onClick={() =>
+                        handleDelete(business.id)
+                      }
+                      style={deleteIconBtn}
+                      title="Delete"
+                    >
+                      <FaTrash />
+                    </button>
                   </td>
                 </tr>
               ))

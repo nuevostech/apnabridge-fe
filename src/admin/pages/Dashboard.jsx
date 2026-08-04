@@ -3,21 +3,20 @@ import { getDashboardSummary } from "../../utils/api";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
-    // Business
     totalBusinesses: 0,
     approvedBusinesses: 0,
     pendingBusinesses: 0,
     rejectedBusinesses: 0,
 
-    // Testimonials
     totalTestimonials: 0,
     approvedTestimonials: 0,
     pendingTestimonials: 0,
     rejectedTestimonials: 0,
 
-    // Contacts
     totalContacts: 0,
   });
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadDashboard();
@@ -25,12 +24,22 @@ const Dashboard = () => {
 
   const loadDashboard = async () => {
     try {
+      setLoading(true);
+
       const response = await getDashboardSummary();
-      setStats(response.data);
+
+      setStats(response.data || {});
     } catch (err) {
       console.error(err);
+      alert(err.message);
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return <h3>Loading dashboard...</h3>;
+  }
 
   return (
     <div className="admin-page">
@@ -45,8 +54,6 @@ const Dashboard = () => {
           marginTop: "30px",
         }}
       >
-        {/* Business Statistics */}
-
         <DashboardCard
           title="Total Businesses"
           value={stats.totalBusinesses}
@@ -67,8 +74,6 @@ const Dashboard = () => {
           value={stats.rejectedBusinesses}
         />
 
-        {/* Testimonial Statistics */}
-
         <DashboardCard
           title="Total Testimonials"
           value={stats.totalTestimonials}
@@ -88,8 +93,6 @@ const Dashboard = () => {
           title="Rejected Testimonials"
           value={stats.rejectedTestimonials}
         />
-
-        {/* Contacts */}
 
         <DashboardCard
           title="Total Contacts"
@@ -130,11 +133,11 @@ function DashboardCard({ title, value }) {
           margin: 0,
           fontSize: "42px",
           color: "#D97706",
-          fontWeight: 500,
+          fontWeight: 600,
           lineHeight: 1,
         }}
       >
-        {value}
+        {value ?? 0}
       </h1>
     </div>
   );

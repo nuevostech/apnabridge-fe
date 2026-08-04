@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import logo from '../assets/apnabridge-logo.png'
+import { whatsappGroups } from '../data/whatsapp'
 
 export default function Footer() {
   return (
@@ -26,10 +27,13 @@ export default function Footer() {
 
         <div className="footer-col">
           <h4>Stay connected</h4>
-          <a href="https://wa.me/10000000000" target="_blank" rel="noreferrer">
-            Join WhatsApp Community
+          <a href={whatsappGroups.USA} target="_blank" rel="noreferrer">
+            🇺🇸 USA WhatsApp Community
           </a>
-          <a href="mailto:hello@apnabridge.com">hello@apnabridge.com</a>
+          <a href={whatsappGroups.India} target="_blank" rel="noreferrer">
+            🇮🇳 India WhatsApp Community
+          </a>
+          <a href="mailto:info.apnabridge@gmail.com">info.apnabridge@gmail.com</a>
         </div>
       </div>
       <div className="site-footer-bottom">

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { sendContactMessage } from '../utils/api'
+import { whatsappGroups } from '../data/whatsapp'
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
@@ -74,8 +75,11 @@ export default function Contact() {
 
         <div className="contact-direct">
           <h2>Direct</h2>
-          <a href="https://wa.me/10000000000" target="_blank" rel="noreferrer" className="contact-direct-link">
-            WhatsApp
+          <a href={whatsappGroups.USA} target="_blank" rel="noreferrer" className="contact-direct-link">
+            🇺🇸 WhatsApp (USA)
+          </a>
+          <a href={whatsappGroups.India} target="_blank" rel="noreferrer" className="contact-direct-link">
+            🇮🇳 WhatsApp (India)
           </a>
           <a href="mailto:hello@apnabridge.com" className="contact-direct-link">
             hello@apnabridge.com

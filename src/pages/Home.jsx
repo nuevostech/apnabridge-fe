@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import BusinessCard from '../components/BusinessCard'
+import { whatsappGroups } from '../data/whatsapp'
 import {
   createTestimonial,
   getTestimonials,
@@ -209,14 +210,14 @@ setShowTestimonialForm(false);
           <h2>Join the ApnaBridge WhatsApp Community</h2>
           <p>Get promotion drops, business tips and local updates straight to your phone.</p>
         </div>
-        <a
-          href="https://wa.me/10000000000"
-          target="_blank"
-          rel="noreferrer"
-          className="btn btn-primary"
-        >
-          Join on WhatsApp
-        </a>
+        <div className="whatsapp-cta-actions">
+          <a href={whatsappGroups.USA} target="_blank" rel="noreferrer" className="btn btn-primary">
+            🇺🇸 Join USA Community
+          </a>
+          <a href={whatsappGroups.India} target="_blank" rel="noreferrer" className="btn btn-primary">
+            🇮🇳 Join India Community
+          </a>
+        </div>
       </section>
 
       <section className="section">

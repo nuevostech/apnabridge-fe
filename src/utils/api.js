@@ -278,3 +278,14 @@ export function rejectJob(id) {
 export function deleteJob(id) {
   return request(`/jobs/${id}`, { method: "DELETE" });
 }
+
+// ======================================================
+// Auth
+// ======================================================
+
+export function login(email, password) {
+  return request("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}

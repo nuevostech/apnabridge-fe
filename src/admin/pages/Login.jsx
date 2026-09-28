@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import logo from "../../assets/apnabridge-logo.png";
+import { login } from "../../utils/api";
 import "./Login.css";
 
 export default function Login() {
@@ -20,30 +21,15 @@ export default function Login() {
   setError("");
 
   try {
-    const response = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
+    const data = await login(email, password);
 
-    const data = await response.json();
+    localStorage.setItem("adminToken", data.token);
+    localStorage.setItem("admin", JSON.stringify(data.admin));
 
-    if (response.ok && data.success) {
-  localStorage.setItem("adminToken", data.token);
-  localStorage.setItem("admin", JSON.stringify(data.admin));
-
-  navigate("/admin");
-} else {
-  setError(data.message || "Invalid credentials.");
-}
+    navigate("/admin");
   } catch (error) {
     console.error(error);
-    setError("Unable to connect to the server.");
+    setError(error.message || "Unable to connect to the server.");
   } finally {
     setLoading(false);
   }

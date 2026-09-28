@@ -16,7 +16,13 @@ echo "==> Building"
 npm run build
 
 echo "==> Syncing dist/ to s3://$BUCKET"
-aws s3 sync dist/ "s3://$BUCKET" --delete
+# --delete only prunes stale build output; it must never touch the
+# backend's user-upload prefixes (logos/, covers/, gallery/) that live
+# in this same bucket.
+aws s3 sync dist/ "s3://$BUCKET" --delete \
+  --exclude "logos/*" \
+  --exclude "covers/*" \
+  --exclude "gallery/*"
 
 echo "==> Invalidating CloudFront cache ($DISTRIBUTION_ID)"
 aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths "/*" >/dev/null

@@ -8,6 +8,11 @@ const Dashboard = () => {
     pendingBusinesses: 0,
     rejectedBusinesses: 0,
 
+    totalJobs: 0,
+    approvedJobs: 0,
+    pendingJobs: 0,
+    rejectedJobs: 0,
+
     totalTestimonials: 0,
     approvedTestimonials: 0,
     pendingTestimonials: 0,
@@ -72,6 +77,26 @@ const Dashboard = () => {
         <DashboardCard
           title="Rejected Businesses"
           value={stats.rejectedBusinesses}
+        />
+
+        <DashboardCard
+          title="Total Jobs"
+          value={stats.totalJobs}
+        />
+
+        <DashboardCard
+          title="Approved Jobs"
+          value={stats.approvedJobs}
+        />
+
+        <DashboardCard
+          title="Pending Jobs"
+          value={stats.pendingJobs}
+        />
+
+        <DashboardCard
+          title="Rejected Jobs"
+          value={stats.rejectedJobs}
         />
 
         <DashboardCard

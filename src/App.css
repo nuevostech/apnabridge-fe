@@ -50,7 +50,6 @@
 }
 
 .eyebrow {
-  font-family: var(--mono);
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -137,7 +136,8 @@
 }
 
 .footer-logo {
-  height: 40px;
+  height: 60px;   /* Smaller logo */
+  width: auto;
   margin-bottom: 0.2rem;
 }
 
@@ -270,7 +270,6 @@
 .business-card h3 {
   margin: 0 0 0.2rem;
   font-size: 1rem;
-  font-family: var(--sans);
   font-weight: 600;
 }
 
@@ -302,7 +301,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--serif);
   font-weight: 600;
 }
 
@@ -331,7 +329,6 @@
 }
 
 .cover-placeholder span {
-  font-family: var(--serif);
   font-size: 2.5rem;
   color: rgba(255, 255, 255, 0.85);
 }
@@ -372,7 +369,6 @@
   margin-left: auto;
   color: var(--muted);
   font-size: 0.85rem;
-  font-family: var(--mono);
 }
 
 /* Country grid */
@@ -478,7 +474,6 @@
   background: var(--paper);
   font-size: 1rem;
   color: var(--ink);
-  font-family: var(--sans);
 }
 
 .testimonial-grid {
@@ -496,7 +491,6 @@
 }
 
 .testimonial-card p {
-  font-family: var(--serif);
   font-size: 1.05rem;
 }
 
@@ -723,10 +717,9 @@
   padding: 0.65rem 0.8rem;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  background: var(--paper-alt); /* Light cream */
+  background: var(--paper-alt);
   font-size: 1rem;
   color: var(--ink);
-  font-family: var(--sans);
 }
 
 .promote-form input:focus,
@@ -888,7 +881,6 @@
 }
 
 .footer-col h4 {
-  font-family: var(--mono);
   font-size: 0.72rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;

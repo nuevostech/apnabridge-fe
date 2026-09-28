@@ -15,6 +15,11 @@ const Sidebar = () => {
       icon: "🏢",
     },
     {
+      name: "Jobs",
+      path: "/admin/jobs",
+      icon: "💼",
+    },
+    {
       name: "Testimonials",
       path: "/admin/testimonials",
       icon: "💬",
@@ -82,4 +87,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default Sidebar; 

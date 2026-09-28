@@ -5,6 +5,7 @@ import logo from '../assets/apnabridge-logo.png'
 const NAV_LINKS = [
   { to: '/', label: 'Home', end: true },
   { to: '/businesses', label: 'Businesses' },
+  { to: '/jobs', label: 'Jobs' },
   { to: '/categories', label: 'Categories' },
   { to: '/promote', label: 'Promote Your Business' },
   { to: '/resources', label: 'Resources' },

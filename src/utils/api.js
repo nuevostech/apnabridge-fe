@@ -189,3 +189,92 @@ export function getDashboardSummary() {
 export function getCategories() {
   return request("/categories");
 }
+
+// ======================================================
+// Jobs (Public)
+// ======================================================
+
+export function getJobs({
+  country = "all",
+  category = "",
+  q = "",
+  location = "",
+  page = 1,
+  limit = 10,
+} = {}) {
+  const params = new URLSearchParams({
+    country,
+    page,
+    limit,
+  });
+
+  if (category) params.set("category", category);
+  if (q) params.set("q", q);
+  if (location) params.set("location", location);
+
+  return request(`/jobs?${params.toString()}`);
+}
+
+export function getFeaturedJobs(country = "all") {
+  const params = new URLSearchParams({ country });
+  return request(`/jobs/featured?${params.toString()}`);
+}
+
+export function getJobCategoryCounts() {
+  return request("/jobs/categories/counts");
+}
+
+export function getJob(id) {
+  return request(`/jobs/${id}`);
+}
+
+export function searchJobs(keyword) {
+  return request(`/jobs/search?q=${encodeURIComponent(keyword)}`);
+}
+
+export function createJob({
+  title,
+  company,
+  country,
+  location,
+  category,
+  jobType,
+  description,
+  email,
+  tags = [],
+}) {
+  return request("/jobs", {
+    method: "POST",
+    body: JSON.stringify({
+      title,
+      company,
+      country,
+      location,
+      category,
+      jobType,
+      description,
+      email,
+      tags,
+    }),
+  });
+}
+
+// ======================================================
+// Jobs (Admin)
+// ======================================================
+
+export function getAdminJobs(page = 1, limit = 20) {
+  return request(`/jobs/admin?page=${page}&limit=${limit}`);
+}
+
+export function approveJob(id) {
+  return request(`/jobs/${id}/approve`, { method: "PUT" });
+}
+
+export function rejectJob(id) {
+  return request(`/jobs/${id}/reject`, { method: "PUT" });
+}
+
+export function deleteJob(id) {
+  return request(`/jobs/${id}`, { method: "DELETE" });
+}

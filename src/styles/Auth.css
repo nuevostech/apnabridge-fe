@@ -1,0 +1,267 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+  background: #fdf6ee;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem 2.5rem 2rem;
+}
+
+.auth-card.auth-card-wide {
+  max-width: 640px;
+}
+
+.auth-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.auth-logo img {
+  height: 34px;
+  width: auto;
+}
+
+.auth-title {
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  margin-bottom: 0.4rem;
+}
+
+.auth-subtext {
+  text-align: center;
+  color: #777;
+  margin-bottom: 1.75rem;
+  font-size: 0.9rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.auth-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 480px) {
+  .auth-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #222;
+}
+
+.auth-optional {
+  font-weight: 400;
+  color: #999;
+}
+
+.auth-form input,
+.auth-form select {
+  padding: 0.75rem 0.9rem;
+  border: 1px solid #e2e2e2;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  background: #fff;
+  color: #222;
+}
+
+.auth-form input::placeholder {
+  color: #aaa;
+}
+
+.auth-form input:focus,
+.auth-form select:focus {
+  outline: none;
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+}
+
+.auth-password-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-password-wrap input {
+  width: 100%;
+  padding-right: 2.5rem;
+}
+
+.auth-eye-toggle {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.auth-eye-toggle:hover {
+  color: #555;
+}
+
+.auth-locations {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.auth-location-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.auth-location-row input {
+  flex: 1;
+}
+
+.auth-location-remove {
+  border: 1px solid #e2e2e2;
+  background: #fff;
+  border-radius: 10px;
+  width: 42px;
+  min-width: 42px;
+  font-size: 1.1rem;
+  color: #b91c1c;
+  cursor: pointer;
+}
+
+.auth-location-add {
+  align-self: flex-start;
+  border: 1px dashed #f97316;
+  background: #fff7ed;
+  color: #c2410c;
+  border-radius: 10px;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-submit {
+  margin-top: 0.4rem;
+  padding: 0.85rem;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.auth-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-error {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  margin-bottom: 1.1rem;
+}
+
+.auth-info {
+  background: #dcfce7;
+  color: #15803d;
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  margin-bottom: 1.1rem;
+}
+
+.auth-divider {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 1.5rem 0 1rem;
+}
+
+.auth-footer {
+  text-align: center;
+  font-size: 0.88rem;
+  color: #666;
+}
+
+.auth-footer a {
+  color: #f97316;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.auth-copyright {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #bbb;
+  margin-top: 0.5rem;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #f97316;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.88rem;
+}
+
+.link-button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.otp-inputs {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+}
+
+.otp-box {
+  width: 44px;
+  height: 52px;
+  text-align: center;
+  font-size: 1.4rem;
+  border: 1px solid #e2e2e2;
+  border-radius: 10px;
+}
+
+.otp-box:focus {
+  outline: none;
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+}

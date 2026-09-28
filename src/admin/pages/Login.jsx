@@ -65,7 +65,7 @@ export default function Login() {
           <h3>ADMIN PORTAL</h3>
 
           <p className="subtitle">
-            Welcome back! Please sign in to continue.
+            Welcome back! Please login to continue.
           </p>
 
         </div>

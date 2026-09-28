@@ -1,0 +1,152 @@
+.jobdetail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(16, 35, 63, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 50;
+}
+
+.jobdetail-panel {
+  background: #fdefe2;
+  border-radius: 16px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 32px;
+  position: relative;
+  box-shadow: 0 24px 60px rgba(16, 35, 63, 0.25);
+}
+
+.jobdetail-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #6b7688;
+  cursor: pointer;
+}
+
+.jobdetail-header {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.jobdetail-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  background: #f15a29;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.jobdetail-header h2 {
+  margin: 0 0 4px;
+  font-size: 1.4rem;
+  color: #10233f;
+}
+
+.jobdetail-meta {
+  margin: 0 0 10px;
+  color: #6b7688;
+  font-size: 0.9rem;
+}
+
+.jobdetail-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.jobdetail-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #e7f7ee;
+  color: #1f9d55;
+}
+
+.jobdetail-body {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 28px;
+}
+
+.jobdetail-main h3 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  color: #10233f;
+}
+
+.jobdetail-main p {
+  margin: 0;
+  color: #4a5568;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.jobdetail-contact {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  align-self: start;
+}
+
+.jobdetail-contact h4 {
+  margin: 0 0 14px;
+  font-size: 0.95rem;
+  color: #10233f;
+}
+
+.jobdetail-contact-row {
+  margin-bottom: 12px;
+  font-size: 0.88rem;
+}
+
+.jobdetail-contact-label {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #8a94a6;
+  margin-bottom: 2px;
+}
+
+.jobdetail-contact-row a {
+  color: #10233f;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.jobdetail-apply-btn {
+  display: block;
+  text-align: center;
+  background: #f15a29;
+  color: #fff;
+  border-radius: 10px;
+  padding: 11px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .jobdetail-body {
+    grid-template-columns: 1fr;
+  }
+}

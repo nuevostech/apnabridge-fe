@@ -136,8 +136,8 @@
 }
 
 .footer-logo {
-  height: 60px;   /* Smaller logo */
-  width: auto;
+  height: 40px;   /* Smaller logo */
+  width: 200px;
   margin-bottom: 0.2rem;
 }
 

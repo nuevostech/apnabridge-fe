@@ -114,7 +114,7 @@ setShowTestimonialForm(false);
       <section className="hero">
         <div className="hero-inner">
           <p className="eyebrow">Free for your first 100 days</p>
-          <h1>Promoting Indian Businesses in the USA &amp; India</h1>
+          <h1>Connecting Indians in the USA &amp; India</h1>
           <p className="hero-sub">
             Get discovered by the community — free business promotion for your first 100 days on
             ApnaBridge.
@@ -212,10 +212,10 @@ setShowTestimonialForm(false);
         </div>
         <div className="whatsapp-cta-actions">
           <a href={whatsappGroups.USA} target="_blank" rel="noreferrer" className="btn btn-primary">
-            🇺🇸 Join USA Community
+             Join USA Community
           </a>
           <a href={whatsappGroups.India} target="_blank" rel="noreferrer" className="btn btn-primary">
-            🇮🇳 Join India Community
+             Join India Community
           </a>
         </div>
       </section>

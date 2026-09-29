@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="site-footer-inner">
         <div className="footer-col">
           <img src={logo} alt="ApnaBridge" className="brand-logo footer-logo" />
-          <p>Promoting Indian businesses across the USA and India.</p>
+          <p>Connecting Indians in the USA and India.</p>
         </div>
 
         <div className="footer-col">
@@ -28,10 +28,10 @@ export default function Footer() {
         <div className="footer-col">
           <h4>Stay connected</h4>
           <a href={whatsappGroups.USA} target="_blank" rel="noreferrer">
-            🇺🇸 USA WhatsApp Community
+             USA WhatsApp Community
           </a>
           <a href={whatsappGroups.India} target="_blank" rel="noreferrer">
-            🇮🇳 India WhatsApp Community
+             India WhatsApp Community
           </a>
           <a href="mailto:info.apnabridge@gmail.com">info.apnabridge@gmail.com</a>
         </div>

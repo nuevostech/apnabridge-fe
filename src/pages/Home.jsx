@@ -212,10 +212,10 @@ setShowTestimonialForm(false);
         </div>
         <div className="whatsapp-cta-actions">
           <a href={whatsappGroups.USA} target="_blank" rel="noreferrer" className="btn btn-primary">
-            🇺🇸 Join USA Community
+             Join USA Community
           </a>
           <a href={whatsappGroups.India} target="_blank" rel="noreferrer" className="btn btn-primary">
-            🇮🇳 Join India Community
+             Join India Community
           </a>
         </div>
       </section>

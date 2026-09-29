@@ -28,10 +28,10 @@ export default function Footer() {
         <div className="footer-col">
           <h4>Stay connected</h4>
           <a href={whatsappGroups.USA} target="_blank" rel="noreferrer">
-            🇺🇸 USA WhatsApp Community
+             USA WhatsApp Community
           </a>
           <a href={whatsappGroups.India} target="_blank" rel="noreferrer">
-            🇮🇳 India WhatsApp Community
+             India WhatsApp Community
           </a>
           <a href="mailto:info.apnabridge@gmail.com">info.apnabridge@gmail.com</a>
         </div>

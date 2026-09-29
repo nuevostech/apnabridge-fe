@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="site-footer-inner">
         <div className="footer-col">
           <img src={logo} alt="ApnaBridge" className="brand-logo footer-logo" />
-          <p>Promoting Indian businesses across the USA and India.</p>
+          <p>Connecting Indians in the USA and India.</p>
         </div>
 
         <div className="footer-col">

@@ -4,11 +4,15 @@ import { useEffect } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
-// Public Pages
+/* ============================================================
+   Public Pages
+============================================================ */
+
 import Home from "./pages/Home";
 import Businesses from "./pages/Businesses";
 import BusinessProfile from "./pages/BusinessProfile";
 import Jobs from "./pages/Jobs";
+import HomeServices from "./pages/HomeServices";
 import Categories from "./pages/Categories";
 import Promote from "./pages/Promote";
 import Resources from "./pages/Resources";
@@ -16,11 +20,17 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
-// User Auth
+/* ============================================================
+   User Authentication
+============================================================ */
+
 import UserLogin from "./pages/Login";
 import UserSignup from "./pages/Signup";
 
-// Admin
+/* ============================================================
+   Admin
+============================================================ */
+
 import Login from "./admin/pages/Login";
 import ProtectedRoute from "./admin/components/ProtectedRoute";
 import AdminLayout from "./admin/layouts/AdminLayout";
@@ -29,6 +39,10 @@ import BusinessesAdmin from "./admin/pages/Businesses";
 import AdminJobs from "./admin/pages/Jobs";
 import Testimonials from "./admin/pages/Testimonials";
 import Contacts from "./admin/pages/Contacts";
+
+/* ============================================================
+   Scroll To Top
+============================================================ */
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -40,59 +54,181 @@ function ScrollToTop() {
   return null;
 }
 
+/* ============================================================
+   App
+============================================================ */
+
 function App() {
   const location = useLocation();
 
+  // Check if current page is an admin page
   const isAdmin = location.pathname.startsWith("/admin");
-  const isAuthPage = ["/login", "/signup"].includes(location.pathname);
+
+  // Check if current page is Login or Signup
+  const isAuthPage = ["/login", "/signup"].includes(
+    location.pathname
+  );
+
+  // Hide Header and Footer on admin/auth pages
   const hideChrome = isAdmin || isAuthPage;
 
   return (
     <>
+      {/* Scroll To Top */}
       <ScrollToTop />
 
+      {/* Public Header */}
       {!hideChrome && <Header />}
 
+      {/* Main Content */}
       <main className={hideChrome ? "" : "site-main"}>
         <Routes>
-          {/* Public Website */}
-          <Route path="/" element={<Home />} />
-          <Route path="/businesses" element={<Businesses />} />
-          <Route path="/businesses/:id" element={<BusinessProfile />} />
-          <Route path="/jobs" element={<Jobs />} />
-          <Route path="/categories" element={<Categories />} />
-          <Route path="/promote" element={<Promote />} />
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
 
-          {/* User Auth */}
-          <Route path="/login" element={<UserLogin />} />
-          <Route path="/signup" element={<UserSignup />} />
+          {/* ==================================================
+              PUBLIC WEBSITE
+          ================================================== */}
 
-         {/* Admin Login */}
-<Route path="/admin/login" element={<Login />} />
+          {/* Home */}
+          <Route
+            path="/"
+            element={<Home />}
+          />
 
-{/* Protected Admin Dashboard */}
-<Route
-  path="/admin"
-  element={
-    <ProtectedRoute>
-      <AdminLayout />
-    </ProtectedRoute>
-  }
->
-  <Route index element={<Dashboard />} />
-  <Route path="businesses" element={<BusinessesAdmin />} />
-  <Route path="jobs" element={<AdminJobs />} />
-  <Route path="testimonials" element={<Testimonials />} />
-  <Route path="contacts" element={<Contacts />} />
-</Route>
+          {/* Businesses */}
+          <Route
+            path="/businesses"
+            element={<Businesses />}
+          />
 
-          <Route path="*" element={<NotFound />} />
+          {/* Business Profile */}
+          <Route
+            path="/businesses/:id"
+            element={<BusinessProfile />}
+          />
+
+          {/* Jobs */}
+          <Route
+            path="/jobs"
+            element={<Jobs />}
+          />
+
+          {/* Home Services */}
+          <Route
+            path="/home-services"
+            element={<HomeServices />}
+          />
+
+          {/* Categories */}
+          <Route
+            path="/categories"
+            element={<Categories />}
+          />
+
+          {/* Promote Your Business */}
+          <Route
+            path="/promote"
+            element={<Promote />}
+          />
+
+          {/* Resources */}
+          <Route
+            path="/resources"
+            element={<Resources />}
+          />
+
+          {/* About */}
+          <Route
+            path="/about"
+            element={<About />}
+          />
+
+          {/* Contact */}
+          <Route
+            path="/contact"
+            element={<Contact />}
+          />
+
+          {/* ==================================================
+              USER AUTHENTICATION
+          ================================================== */}
+
+          {/* User Login */}
+          <Route
+            path="/login"
+            element={<UserLogin />}
+          />
+
+          {/* User Signup */}
+          <Route
+            path="/signup"
+            element={<UserSignup />}
+          />
+
+          {/* ==================================================
+              ADMIN LOGIN
+          ================================================== */}
+
+          <Route
+            path="/admin/login"
+            element={<Login />}
+          />
+
+          {/* ==================================================
+              PROTECTED ADMIN DASHBOARD
+          ================================================== */}
+
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
+            {/* Admin Dashboard */}
+            <Route
+              index
+              element={<Dashboard />}
+            />
+
+            {/* Admin Businesses */}
+            <Route
+              path="businesses"
+              element={<BusinessesAdmin />}
+            />
+
+            {/* Admin Jobs */}
+            <Route
+              path="jobs"
+              element={<AdminJobs />}
+            />
+
+            {/* Admin Testimonials */}
+            <Route
+              path="testimonials"
+              element={<Testimonials />}
+            />
+
+            {/* Admin Contacts */}
+            <Route
+              path="contacts"
+              element={<Contacts />}
+            />
+          </Route>
+
+          {/* ==================================================
+              404 PAGE
+          ================================================== */}
+
+          <Route
+            path="*"
+            element={<NotFound />}
+          />
+
         </Routes>
       </main>
 
+      {/* Public Footer */}
       {!hideChrome && <Footer />}
     </>
   );

@@ -1,7 +1,12 @@
 
-const API_BASE_URL =
+const configuredApiBase = (
   import.meta.env.VITE_API_BASE_URL ||
-  "https://apnabridge-be.onrender.com/api";
+  (import.meta.env.DEV
+    ? "http://localhost:5001/api"
+    : "https://apnabridge-be.onrender.com/api")
+).replace(/\/+$/, "");
+
+export const API_BASE_URL = `${configuredApiBase.replace(/\/api$/i, "")}/api`;
 
 
 async function request(path, options = {}) {
